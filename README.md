@@ -19,8 +19,8 @@ In the examples below 'X' refers to the meteorological variable:
 AT = air temperature at 2m, 
 PR = surface precipitation,
 RH = relative humidity at 2m,
-U  = easting wind speed at 10m,
-V =  northing wind speed at 10m.
+U  = westing wind speed at 10m,
+V =  southing wind speed at 10m.
 
 * get_X_forecast.sh  Downloads the NAEFS ensemble forecast grib files from http://dd.weatheroffice.gc.ca/ensemble/naefs/grib2/raw and processes the output to produce a WISKI compliant time series for a single variable type at each of the specified locations. Note that these files take a VERY long time to execute. The original forecasts have a spatial resolution of 0.5 x 0.5 degrees which is quite coarse, and a temporal resolution of 6 hours. However these forecasts are for 384 hours (16 days) into the future.
 
