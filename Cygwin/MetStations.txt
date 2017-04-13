@@ -1,0 +1,9 @@
+BeaverlodgeRCS	-119.4	55.2
+EagleshamAGDM	-117.89	55.81
+GrandePrairieAirport	-118.89	55.18
+HendricksonCreek	-118.45	53.8
+LaGlaceAGDM	-119.25	55.42
+JeanCoteAGDM	-117.12	55.91
+PeoriaAGDM	-118.29	55.62
+TeepeeCreekAGDM	-118.41	55.35
+ValleyviewAGDM	-117.2	55.1
