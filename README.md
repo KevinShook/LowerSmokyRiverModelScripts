@@ -24,7 +24,7 @@ V =  southing wind speed at 10m.
 
 * get_X_forecast.sh  Downloads the NAEFS ensemble forecast grib files from http://dd.weatheroffice.gc.ca/ensemble/naefs/grib2/raw and processes the output to produce a WISKI compliant time series for a single variable type at each of the specified locations. Note that these files take a VERY long time to execute. The original forecasts have a spatial resolution of 0.5 x 0.5 degrees which is quite coarse, and a temporal resolution of 6 hours. However these forecasts are for 384 hours (16 days) into the future.
 
-* get_X_forecast_GEM.sh Downlaods the forecasts from the GEM flobal model at http://dd.weather.gc.ca/model_gem_global/25km/grib2/lat_lon. The GEM model is higher spatial (25 km) and temporal resolution (3 hours) than NAEFS, but is only projected 240 hours (24 days) into the future. On the other 
+* get_X_forecast_GEM.sh Downloads the forecasts from the GEM flobal model at http://dd.weather.gc.ca/model_gem_global/25km/grib2/lat_lon. The GEM model is higher spatial (25 km) and temporal resolution (3 hours) than NAEFS, but is only projected 240 hours (24 days) into the future. On the other 
 
 * ExtractX.awk  A gawk script to process the temporary files produced by the get_X_forecast.sh script. The variables require massaging including deaccumulation and unit conversions to be useful, and need to be converted to the WISKI model format.
 
