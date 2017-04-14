@@ -1,9 +1,9 @@
-# LowerSmokyRiverModelScripts
+# Lower Smoky River Model Scripts
 Scripts to download, pre-process and post-process files for the Lower Smoky River CRHM model
 
 The scripts are written in bash and therefore require either Cygwin on Windows or a Unix-type OS (such as Linux or OSX).
 You can get Cygwin from https://www.cygwin.com/.
-Note that there are 2 sets of scripts, one for Cygwin and the other for Linux (and Unix/OSX). The difference is that the Cygwin versions have the directories hard-coded and specified using the Cygwin notation to spcify the drive letter. Cygwin is assumed to be installed in the directory c:\cygwin. The Linux scripts are also more flexible as they are intended to be used for teaching, rather than a single operational use.
+Note that there are 2 sets of scripts, one for Cygwin and the other for Linux (and Unix/OSX). The difference is that the Cygwin versions have the directories hard-coded and specified using the Cygwin notation to specify the drive letter. Cygwin is assumed to be installed in the directory c:\cygwin. The Linux scripts are also more flexible as they are intended to be used for teaching, rather than a single operational use.
 The Linux scripts can be run from any directory and will create the subdirectories for the output files if they do not exist. Note that the Linux scripts have only been tested on Linux Mint 18.2.
 
 These scripts require several standard bash programs (sed, gawk, wget) to be installed - if you are running under Cygwin, make sure that these programs are in your cygwin\bin directory. The scripts also require wgrib2, which is described at http://www.cpc.noaa.gov/products/wesley/wgrib2/ and can be donwloaded from http://opengrads.org/. Note that if you are using Cygwin the executable file must be copied to cygwin\bin.
