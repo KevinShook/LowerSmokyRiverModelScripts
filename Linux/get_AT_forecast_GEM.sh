@@ -15,7 +15,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#    This script downloads AT forecasts for 12h (GMT) and creates .tsf files
+#    This script downloads GEM 25km AT forecasts for 12h (GMT) and creates .tsf files
 #    This version uses wildcards to prevent changes in the file names screwing up
 #    The scripts
 
@@ -31,7 +31,15 @@ output_file_path='./TimeSeries/'
 site_file_path='./'
 remote_variable='CMC_glb_TMP_TGL_2_latlon.24x.24_'
 variable_type='AT'
-maxhours=240
+
+# max number of hours=240
+maxhours=24
+
+# create folders if required
+mkdir -p $grib_file_path
+mkdir -p $temp_file_path
+mkdir -p $output_file_pat
+
 # download air temps
 echo 'Downloading air temps'
 # get today's date
@@ -70,23 +78,19 @@ do
      lon=${lons[$index]}
      wgrib2 $f -start_FT -lon $lon $lat > $temp_file_path$variable_type$index'.tmp'
     # extract each line to a separate file
-     for l in `seq 1 1 1`
-      do
-       sed -n $l'p' $temp_file_path$variable_type$index'.tmp' >> $temp_file_path$variable_type$index'scenario'$l'.tmp'
-      done
+     l=1
+     sed -n $l'p' $temp_file_path$variable_type$index'.tmp' >> $temp_file_path$variable_type$index'scenario'$l'.tmp'
     done
   done
 done
 
-#convert air temp to C and adjust time to be MST for each scenario
+#convert air temp to C and adjust time to be MST
  for index in ${!names[*]}
   do
    site=${names[$index]}
-   for l in `seq 1 1 1`
-     do
-       gawk -f $awk_script_path'Extract'$variable_type'.awk'  $temp_file_path$variable_type$index'scenario'$l'.tmp' > $output_file_path$site'_'$variable_type'_Forecast.tsf'
-       rm $temp_file_path$variable_type$index'scenario'$l'.tmp'
-     done
+   l=1
+   gawk -f $awk_script_path'Extract'$variable_type'.awk'  $temp_file_path$variable_type$index'scenario'$l'.tmp' > $output_file_path$site'_'$variable_type'_Forecast.tsf'
+   rm $temp_file_path$variable_type$index'scenario'$l'.tmp'
  done
 
 # delete temporary files

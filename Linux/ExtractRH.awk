@@ -1,5 +1,5 @@
 # extracts date, time and RH from decoded GRIB2 data
-# convert AT from K to C
+
 #    Copyright (C) 2012, Kevin Shook, Centre for Hydrology
 #    University of Saskatchewan, 12 Kirk Hall, 117 Science Place, Saskatoon, SK, S7N 5C8
 

@@ -8,7 +8,17 @@ The Linux scripts can be run from any directory and will create the subdirectori
 
 These scripts require several standard bash programs (sed, gawk, wget) to be installed - if you are running under Cygwin, make sure that these programs are in your cygwin\bin directory. The scripts also require wgrib2, which is described at http://www.cpc.noaa.gov/products/wesley/wgrib2/ and can be donwloaded from http://opengrads.org/. Note that if you are using Cygwin the executable file must be copied to cygwin\bin.
 
-Script file types
+
+##Data file
+
+MetStations.txt is a tab-delimited file of the names, longitudes and latitudes of the stations for which the files will extact and process the nearest values, e.g.
+BeaverlodgeRCS	-119.4	55.2
+EagleshamAGDM	-117.89	55.81
+GrandePrairieAirport	-118.89	55.18
+HendricksonCreek	-118.45	53.8
+...etc
+
+##Script file types
 
 *  *.cmd    Windows command files. These files are only present in the Cygwin version. Each calls a bash .sh file with the same name.
 *  *.sh     Bash script files. Note that these files must use Unix end of line characters. If you are editing on Windows, user an editor such as Notepad++ which will handle Unix files properly.
@@ -23,7 +33,7 @@ V =  southing wind speed at 10m.
 
 * get_X_forecast.sh  Downloads the NAEFS ensemble forecast grib files from http://dd.weatheroffice.gc.ca/ensemble/naefs/grib2/raw and processes the output to produce a WISKI compliant time series for a single variable type at each of the specified locations. Note that these files take a VERY long time to execute. The original forecasts have a spatial resolution of 0.5 x 0.5 degrees which is quite coarse, and a temporal resolution of 6 hours. However these forecasts are for 384 hours (16 days) into the future.
 
-* get_X_forecast_GEM.sh Downloads the forecasts from the GEM flobal model at http://dd.weather.gc.ca/model_gem_global/25km/grib2/lat_lon. The GEM model is higher spatial (25 km) and temporal resolution (3 hours) than NAEFS, but is only projected 240 hours (24 days) into the future. On the other 
+* get_X_forecast_GEM.sh Downloads the forecasts from the GEM flobal model at http://dd.weather.gc.ca/model_gem_global/25km/grib2/lat_lon. The GEM model is higher spatial (25 km) and temporal resolution (3 hours) than NAEFS, but is only projected 240 hours (24 days) into the future. There are only .sh files for downloading GEM precipitation and air temperatures.
 
 * ExtractX.awk  A gawk script to process the temporary files produced by the get_X_forecast.sh script. The variables require massaging including deaccumulation and unit conversions to be useful, and need to be converted to the WISKI model format.
 

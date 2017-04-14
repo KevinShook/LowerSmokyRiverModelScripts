@@ -86,7 +86,7 @@ do
   done
 done
 
-#deaccumulate precip and adjust time to be MST for each scenario
+# deaccumulate precip and adjust time to be MST for each scenario
  for index in ${!names[*]}
   do
    site=${names[$index]}

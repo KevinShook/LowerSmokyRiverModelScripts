@@ -15,7 +15,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#    This script downloads PR forecasts for 12h (GMT) and creates .tsf files
+#    This script downloads GEM 25km PR forecasts for 12h (GMT) and creates .tsf files
 #    This version uses wildcards to prevent changes in the file names screwing up
 #    The scripts
 
@@ -31,17 +31,26 @@ output_file_path='./TimeSeries/'
 site_file_path='./'
 remote_variable='CMC_glb_APCP_SFC_0_latlon.24x.24_'
 variable_type='PR'
-maxhours=240
+
+# max number of hours=240
+maxhours=24
+
+# create folders if required
+mkdir -p $grib_file_path
+mkdir -p $temp_file_path
+mkdir -p $output_file_path
+
 # download daily precip totals
 # get today's date
 dt=$(date -u +%Y%m%d)
 yest=$(date --date='yesterday' -u +%Y%m%d)
  for hour in `seq -f %03.0f 3 3 $maxhours`
   do
-   wget -r -l1 --no-parent -nd -A $remote_variable$yest'*' $remote_location'/'$run_time'/'$hour'/'
+   wget -r -l1 --no-parent -nd -A $remote_variable$dt'*' $remote_location'/'$run_time'/'$hour'/'
   done
+
+
 # move files to directory
- 
 cp *.grib2 $grib_file_path 
 rm *.grib2 
 
@@ -60,36 +69,32 @@ done < $site_file_path$site_file
 echo 'Extracting data from files'
 for hour in `seq -f %03.0f 3 3 $maxhours`
 do
- for index in ${!names[*]}
-  do
-# get GRIB file using wildcards to uniquely identify each hour
-   FILES=$remote_variable
-   for f in $grib_file_path$FILES'*P'$hour'*.grib2'
-    do 
-     lat=${lats[$index]}
-     lon=${lons[$index]}
-     wgrib2 $f -vt -lon $lon $lat > $temp_file_path$variable_type$index'.tmp'
-    # extract each line to a separate file
-     for l in `seq 1 1 1`
-      do
+  for index in ${!names[*]}
+    do
+    # get GRIB file using wildcards to uniquely identify each hour
+     FILES=$remote_variable
+     for f in $grib_file_path$FILES'*P'$hour'*.grib2'
+      do 
+       lat=${lats[$index]}
+       lon=${lons[$index]}
+       wgrib2 $f -vt -lon $lon $lat > $temp_file_path$variable_type$index'.tmp'
+      # extract each line to a separate file
+       l=1
        sed -n $l'p' $temp_file_path$variable_type$index'.tmp' >> $temp_file_path$variable_type$index'scenario'$l'.tmp'
       done
     done
-  done
 done
 
-#convert air temp to C and adjust time to be MST for each scenario
- for index in ${!names[*]}
+# deaccumulate precip and adjust time to be MST
+for index in ${!names[*]}
   do
-   site=${names[$index]}
-   for l in `seq 1 1 1`
-     do
-       gawk -f $awk_script_path'Extract'$variable_type'.awk'  $temp_file_path$variable_type$index'scenario'$l'.tmp' > $output_file_path$site'_'$variable_type'_Forecast.tsf'
+    site=${names[$index]}
+    l=1
+    gawk -f $awk_script_path'Extract'$variable_type'.awk'  $temp_file_path$variable_type$index'scenario'$l'.tmp' > $output_file_path$site'_'$variable_type'_Forecast.tsf'
        rm $temp_file_path$variable_type$index'scenario'$l'.tmp'
-     done
- done
+done
 
 # delete temporary files
-#rm "$temp_file_path"*.tmp
+rm "$temp_file_path"*.tmp
 # delete GRIB files
-#rm "$grib_file_path"*.grib2b2
+rm "$grib_file_path"*.grib2
