@@ -91,4 +91,4 @@ done
 # delete temporary files
 rm "$temp_file_path"*.tmp
 # delete GRIB files
-rm "$grib_file_path"*.grib2b2
+rm "$grib_file_path"*.grib2
