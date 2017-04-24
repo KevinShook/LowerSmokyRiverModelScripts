@@ -9,7 +9,7 @@ The Linux scripts can be run from any directory and will create the subdirectori
 These scripts require several standard bash programs (sed, gawk, wget) to be installed - if you are running under Cygwin, make sure that these programs are in your cygwin\bin directory. The scripts also require wgrib2, which is described at http://www.cpc.noaa.gov/products/wesley/wgrib2/ and can be donwloaded from http://opengrads.org/. Note that if you are using Cygwin the executable file must be copied to cygwin\bin.
 
 
-##Data file
+## Data file
 
 MetStations.txt is a tab-delimited file of the names, longitudes and latitudes of the stations for which the files will extact and process the nearest values, e.g.
 BeaverlodgeRCS	-119.4	55.2
@@ -18,7 +18,7 @@ GrandePrairieAirport	-118.89	55.18
 HendricksonCreek	-118.45	53.8
 ...etc
 
-##Script file types
+## Script file types
 
 *  *.cmd    Windows command files. These files are only present in the Cygwin version. Each calls a bash .sh file with the same name.
 *  *.sh     Bash script files. Note that these files must use Unix end of line characters. If you are editing on Windows, user an editor such as Notepad++ which will handle Unix files properly.

@@ -1,0 +1,3473 @@
+FileType=Model
+DateFormat=British
+Description=
+	{
+	}
+Start=01/10/2012 @ 00:00:00
+Finish=01/09/2016 @ 23:00:00
+HotStartTime=
+Step=Hourly
+HotStartFile=
+Functions=
+	{
+	Function RH_T_to_VP(RH As Single, T As Single) As Single
+	 ;converts RH (as percent) and air temp (C) to VP (kPa)
+	  float estar
+	
+	  If (T <= 0) Then
+	     estar = 0.611 * EXP((21.88 * T) / ( T + 265.5))
+	  Else
+	    estar = 0.611 * EXP((17.27 * T) / ( T + 237.3))
+	  EndIf
+	  RH_T_to_VP = estar * (RH/100.0)
+	End Function
+	
+	Function VP_T_to_RH(VP As Single, T As Single) As Single
+	 ;converts VP (kPa) and air temp (C) to RH (percent)
+	  float estar
+	
+	  If (T <= 0) Then
+	     estar = 0.611 * EXP((21.88 * T) / ( T + 265.5))
+	  Else
+	    estar = 0.611 * EXP((17.27 * T) / ( T + 237.3))
+	  EndIf
+	  VP_T_to_RH = MIN(MAX((100.0 * VP)/estar,0),100)
+	End Function
+	}
+Workspace
+	{
+	Coordinates=0.000000,0.000000,100.000000,100.000000
+	XGridType=0
+	YGridType=0
+	BorderColour=RGB(0,0,0)
+	FillColour=RGB(255,255,255)
+	BorderStyle=0
+	BorderWidth=1
+	FontSize=-64432
+	Background
+		{
+		}
+	Objects
+		{
+		Node
+			{
+			Name="Global"
+			Description=
+				{
+				}
+			Location=95.863000,4.578000
+			Type="Custom"
+			Symbols=
+				{
+				}
+			Sources=
+			Rule=
+				{
+				}
+			}
+		Node
+			{
+			Name="Precip"
+			Description=
+				{
+				Combines measured and forecast precip data to produce a single time series
+				}
+			Location=77.447000,38.472000
+			Type="Custom"
+			Symbols=
+				{
+				float p1.output = 0
+				float p2.output = 0
+				float p3.output = 0
+				float p4.output = 0
+				float p5.output = 0
+				float p6.output = 0
+				float p7.output = 0
+				float p8.output = 0
+				float p9.output = 0
+				}
+			Sources="p1_measured, p2_measured, p3_measured, p5_measured, p4_measured, p6_measured, p7_measured, p8_measured, p9_measured"
+			Rule=
+				{
+				; check availability of precip values and use best data
+				If (IsNull(p1_measured)) Then
+				    p1.output=0 
+				Else
+				; if measured exists, use it
+				  p1.output=p1_measured
+				EndIf
+				
+				If (IsNull(p2_measured)) Then
+				    p2.output=0 
+				Else
+				; if measured exists, use it
+				  p2.output=p2_measured
+				EndIf
+				
+				If (IsNull(p3_measured)) Then
+				    p3.output=0 
+				Else
+				; if measured exists, use it
+				  p3.output=p3_measured
+				EndIf
+				
+				If (IsNull(p4_measured)) Then
+				    p4.output=0 
+				Else
+				; if measured exists, use it
+				  p4.output=p4_measured
+				EndIf
+				
+				If (IsNull(p5_measured)) Then
+				    p5.output=0 
+				Else
+				; if measured exists, use it
+				  p5.output=p5_measured
+				EndIf
+				
+				If (IsNull(p6_measured)) Then
+				    p6.output=0 
+				Else
+				; if measured exists, use it
+				  p6.output=p6_measured
+				EndIf
+				
+				If (IsNull(p7_measured)) Then
+				    p7.output=0 
+				Else
+				; if measured exists, use it
+				  p7.output=p7_measured
+				EndIf
+				
+				If (IsNull(p8_measured)) Then
+				    p8.output=0 
+				Else
+				; if measured exists, use it
+				  p8.output=p8_measured
+				EndIf
+				
+				If (IsNull(p9_measured)) Then
+				    p9.output=0 
+				Else
+				; if measured exists, use it
+				  p9.output=p9_measured
+				EndIf
+				}
+			}
+		Node
+			{
+			Name="AirTemp"
+			Description=
+				{
+				Combines measured and forecast AT data to produce a single time series
+				}
+			Location=10.697000,52.944000
+			Type="Custom"
+			Symbols=
+				{
+				float at1.output = 0
+				float at2.output = 0
+				float at3.output = 0
+				float at4.output = 0
+				float at5.output = 0
+				float at6.output = 0
+				float at7.output = 0
+				float at8.output = 0
+				float at9.output = 0
+				float at_offset = 0
+				}
+			Sources="at1_measured, at2_measured, at3_measured, at4_measured, at5_measured, at6_measured, at7_measured, at8_measured, at9_measured"
+			Rule=
+				{
+				; check availability of at values and use best data
+				
+				float at1_lastgood
+				float at2_lastgood
+				float at3_lastgood
+				float at4_lastgood
+				float at5_lastgood
+				float at6_lastgood
+				float at7_lastgood
+				float at8_lastgood
+				float at9_lastgood
+				
+				If (IsNull(at1_measured)) Then
+				  ; if not measured or forecast, use last value
+				    at1.output=at1_lastgood
+				Else
+				; if measured at exists, use it
+				  at1.output=at1_measured
+				  at1_lastgood=at1_measured
+				EndIf
+				
+				If (IsNull(at2_measured)) Then
+				  ; if not measured or forecast, use last value
+				    at2.output=at2_lastgood
+				Else
+				; if measured at exists, use it
+				  at2.output=at2_measured
+				  at2_lastgood=at2_measured
+				EndIf
+				
+				If (IsNull(at3_measured)) Then
+				  ; if not measured or forecast, use last value
+				    at3.output=at3_lastgood
+				Else
+				; if measured at exists, use it
+				  at3.output=at3_measured
+				  at3_lastgood=at3_measured
+				EndIf
+				
+				If (IsNull(at4_measured)) Then
+				  ; if not measured or forecast, use last value
+				    at4.output=at4_lastgood
+				Else
+				; if measured at exists, use it
+				  at4.output=at4_measured
+				  at4_lastgood=at4_measured
+				EndIf
+				
+				If (IsNull(at5_measured)) Then
+				  ; if not measured or forecast, use last value
+				    at5.output=at5_lastgood
+				Else
+				; if measured at exists, use it
+				  at5.output=at5_measured
+				  at5_lastgood=at5_measured
+				EndIf
+				
+				If (IsNull(at6_measured)) Then
+				  ; if not measured or forecast, use last value
+				    at6.output=at6_lastgood
+				Else
+				; if measured at exists, use it
+				  at6.output=at6_measured
+				  at6_lastgood=at6_measured
+				EndIf
+				
+				If (IsNull(at7_measured)) Then
+				  ; if not measured or forecast, use last value
+				    at7.output=at7_lastgood
+				Else
+				; if measured at exists, use it
+				  at7.output=at7_measured
+				  at7_lastgood=at7_measured
+				EndIf
+				
+				If (IsNull(at8_measured)) Then
+				  ; if not measured or forecast, use last value
+				    at8.output=at8_lastgood
+				Else
+				; if measured at exists, use it
+				  at8.output=at8_measured
+				  at8_lastgood=at8_measured
+				EndIf
+				
+				If (IsNull(at9_measured)) Then
+				  ; if not measured or forecast, use last value
+				    at9.output=at9_lastgood
+				Else
+				; if measured at exists, use it
+				  at9.output=at9_measured
+				  at9_lastgood=at9_measured
+				EndIf
+				
+				
+				
+				
+				
+				}
+			}
+		Node
+			{
+			Name="RH"
+			Description=
+				{
+				Combines measured and forecast RH data to produce a single time series
+				}
+			Location=41.217000,59.119000
+			Type="Custom"
+			Symbols=
+				{
+				float rh1.output = 0
+				float rh2.output = 0
+				float rh3.output = 0
+				float rh4.output = 0
+				float rh5.output = 0
+				float rh6.output = 0
+				float rh7.output = 0
+				float rh8.output = 0
+				float rh9.output = 0
+				}
+			Sources="rh1_measured, rh2_measured, rh3_measured, rh4_measured, rh5_measured, rh6_measured, rh7_measured, rh8_measured, rh9_measured"
+			Rule=
+				{
+				; check availability of rh values and use best data
+				
+				float rh1_lastgood
+				float rh2_lastgood
+				float rh3_lastgood
+				float rh4_lastgood
+				float rh5_lastgood
+				float rh6_lastgood
+				float rh7_lastgood
+				float rh8_lastgood
+				float rh9_lastgood
+				
+				If (IsNull(rh1_measured)) Then
+				    rh1.output=rh1_lastgood
+				Else
+				; if measured rh exists, use it
+				  rh1.output=rh1_measured
+				  rh1_lastgood=rh1_measured
+				EndIf
+				
+				
+				If (IsNull(rh2_measured)) Then
+				    rh2.output=rh2_lastgood
+				Else
+				; if measured rh exists, use it
+				  rh2.output=rh2_measured
+				  rh2_lastgood=rh2_measured
+				EndIf
+				
+				If (IsNull(rh3_measured)) Then
+				    rh3.output=rh3_lastgood
+				Else
+				; if measured rh exists, use it
+				  rh3.output=rh3_measured
+				  rh3_lastgood=rh3_measured
+				EndIf
+				
+				If (IsNull(rh4_measured)) Then
+				    rh4.output=rh4_lastgood
+				Else
+				; if measured rh exists, use it
+				  rh4.output=rh4_measured
+				  rh4_lastgood=rh4_measured
+				EndIf
+				
+				If (IsNull(rh5_measured)) Then
+				    rh5.output=rh5_lastgood
+				Else
+				; if measured rh exists, use it
+				  rh5.output=rh5_measured
+				  rh5_lastgood=rh5_measured
+				EndIf
+				
+				If (IsNull(rh6_measured)) Then
+				    rh6.output=rh6_lastgood
+				Else
+				; if measured rh exists, use it
+				  rh6.output=rh6_measured
+				  rh6_lastgood=rh6_measured
+				EndIf
+				
+				If (IsNull(rh7_measured)) Then
+				    rh7.output=rh7_lastgood
+				Else
+				; if measured rh exists, use it
+				  rh7.output=rh7_measured
+				  rh7_lastgood=rh7_measured
+				EndIf
+				
+				If (IsNull(rh8_measured)) Then
+				    rh8.output=rh8_lastgood
+				Else
+				; if measured rh exists, use it
+				  rh8.output=rh8_measured
+				  rh8_lastgood=rh8_measured
+				EndIf
+				
+				If (IsNull(rh9_measured)) Then
+				    rh9.output=rh9_lastgood
+				Else
+				; if measured rh exists, use it
+				  rh9.output=rh9_measured
+				  rh9_lastgood=rh9_measured
+				EndIf
+				}
+			}
+		Node
+			{
+			Name="WindSpeed"
+			Description=
+				{
+				Combines measured and forecast RH data to produce a single time series
+				}
+			Location=62.383000,64.171000
+			Type="Custom"
+			Symbols=
+				{
+				float u1.output = 0
+				float u2.output = 0
+				float u3.output = 0
+				float u4.output = 0
+				float u5.output = 0
+				float u6.output = 0
+				float u7.output = 0
+				float u8.output = 0
+				float u9.output = 0
+				}
+			Sources="u1_measured, u2_measured, u3_measured, u4_measured, u5_measured, u6_measured, u7_measured, u8_measured, u9_measured"
+			Rule=
+				{
+				; check availability of rh values and use best data
+				; converts forecast U from m/s to km/h
+				float u1_lastgood
+				float u2_lastgood
+				float u3_lastgood
+				float u4_lastgood
+				float u5_lastgood
+				float u6_lastgood
+				float u7_lastgood
+				float u8_lastgood
+				float u9_lastgood
+				
+				If (IsNull(u1_measured)) Then
+				    u1.output=u1_lastgood
+				Else
+				; if measured u exists, use it
+				  u1.output=u1_measured
+				  u1_lastgood=u1_measured
+				EndIf
+				
+				If (IsNull(u2_measured)) Then
+				    u2.output=u2_lastgood
+				Else
+				; if measured u exists, use it
+				  u2.output=u2_measured
+				  u2_lastgood=u2_measured
+				EndIf
+				
+				If (IsNull(u3_measured)) Then
+				    u3.output=u3_lastgood
+				Else
+				; if measured u exists, use it
+				  u3.output=u3_measured
+				  u3_lastgood=u3_measured
+				EndIf
+				
+				If (IsNull(u4_measured)) Then
+				    u4.output=u4_lastgood
+				Else
+				; if measured u exists, use it
+				  u4.output=u4_measured
+				  u4_lastgood=u4_measured
+				EndIf
+				
+				If (IsNull(u5_measured)) Then
+				    u5.output=u5_lastgood
+				Else
+				; if measured u exists, use it
+				  u5.output=u5_measured
+				  u5_lastgood=u5_measured
+				EndIf
+				
+				If (IsNull(u6_measured)) Then
+				    u6.output=u6_lastgood
+				Else
+				; if measured u exists, use it
+				  u6.output=u6_measured
+				  u6_lastgood=u6_measured
+				EndIf
+				
+				If (IsNull(u7_measured)) Then
+				    u7.output=u7_lastgood
+				Else
+				; if measured u exists, use it
+				  u7.output=u7_measured
+				  u7_lastgood=u7_measured
+				EndIf
+				
+				If (IsNull(u8_measured)) Then
+				    u8.output=u8_lastgood
+				Else
+				; if measured u exists, use it
+				  u8.output=u8_measured
+				  u8_lastgood=u8_measured
+				EndIf
+				
+				If (IsNull(u9_measured)) Then
+				    u9.output=u9_lastgood
+				Else
+				; if measured u exists, use it
+				  u9.output=u9_measured
+				  u9_lastgood=u9_measured
+				EndIf
+				}
+			}
+		TextLabel
+			{
+			AttachedTo="WindSpeed"
+			Rect=56.924438,57.184260,72.700653,59.972991
+			MaintainAspectRatio=FALSE
+			FillColour=RGB(255,255,255)
+			BorderColour=RGB(255,255,255)
+			BorderWidth=0
+			BorderStyle=5
+			TextAlignment=1
+			}
+		Node
+			{
+			Name="CRHM_output"
+			Description=
+				{
+				Creates a CRHM .obs file from cleaned inputs, using VP
+				}
+			Location=40.087000,29.527000
+			Type="Custom"
+			Symbols=
+				{
+				const String HourlyObsFileName = "M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\OBSFiles\HourlyCRHMObs_InitialState.obs"
+				const String DailyObsFileName = "M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\OBSFiles\DailyCRHMObs_InitialState.obs"
+				const int num_basins = 26
+				}
+			Sources="ppt1, ppt2, ppt3, ppt4, ppt5, t1, t2, t3, t4, t5, u1, u2, u3, u4, u5, vp1, vp2, vp3, vp4, vp5, ppt6, ppt7, ppt8, ppt9, t6, t7, t8, t9, u6, u7, u8, u9, vp6, vp7, vp8, vp9"
+			Rule=
+				{
+				; This node computes weighted averages of met. data for basins in the Smoky Basin
+				; and creates hourly and daily .obs files for the CRHM Smoky River Model
+				;*****************
+				; Meteorlogical Sites:
+				; Site 1: Beaverlodge RCS
+				; Site 2: Eaglesham AGDM
+				; Site 3: Grande Prairie Airport (YQU)
+				; Site 4: Hendrickson Creek
+				; Site 5: La Glace AGDM
+				; Site 6: Jean Cote
+				; Site 7: Peoria AGDM
+				; Site 8: Teepee Creek
+				; Site 9: Valleyview AGDM
+				
+				; define # of sub-basisn
+				String tb
+				String sp
+				int i
+				int DayNum
+				int HourNum
+				int MonthNum
+				int YearNum
+				String DayString 
+				String MonthString
+				String HourString
+				String t_string
+				String rh_string
+				String u_string
+				String ppt_string
+				
+				String basin[num_basins] 
+				String hourly_header1
+				String hourly_header2
+				String hourly_header3
+				String hourly_header4
+				String hourly_header5
+				String hourly_header6
+				String hourly_header7
+				
+				String daily_header1
+				String daily_header2
+				String daily_header3
+				
+				; weightings of each station by basin
+				float  site1weight[num_basins] 
+				float  site2weight[num_basins]
+				float  site3weight[num_basins]
+				float  site4weight[num_basins]
+				float  site5weight[num_basins]
+				float  site6weight[num_basins]
+				float  site7weight[num_basins]
+				float  site8weight[num_basins]
+				float  site9weight[num_basins]
+				
+				
+				
+				
+				; define obs variable arrays
+				float ppt[num_basins]
+				float ppt_sum[num_basins]
+				float t[num_basins]
+				float u[num_basins]
+				float rh[num_basins]
+				float vp[num_basins]
+				
+				int File1
+				int File2
+				
+				tb = CHAR(9)
+				sp=" "
+				
+				; array of basin names for clarity
+				
+				basin[1]="GA3"
+				basin[2]="GA4"
+				basin[3]="GB3"
+				basin[4]="GB4"
+				basin[5]="GB5"
+				basin[6]="GE2"
+				basin[7]="GE3"
+				basin[8]="GE4"
+				basin[9]="GE5"
+				basin[10]="GE6"
+				basin[11]="GE7"
+				basin[12]="GE8"
+				basin[13]="GF4"
+				basin[14]="GG2"
+				basin[15]="GG3"
+				basin[16]="GG4"
+				basin[17]="GH1"
+				basin[18]="GH2"
+				basin[19]="GH3"
+				basin[20]="GH4"
+				basin[21]="GH5"
+				basin[22]="GJ1"
+				basin[23]="GJ2"
+				basin[24]="GJ3"
+				basin[25]="GJ4"
+				basin[26]="GJ5"
+				
+				;BEAV
+				site1weight[1]=0
+				site1weight[2]=0
+				site1weight[3]=0
+				site1weight[4]=0
+				site1weight[5]=0
+				site1weight[6]=0
+				site1weight[7]=0.21
+				site1weight[8]=0.09
+				site1weight[9]=0.47
+				site1weight[10]=0.03
+				site1weight[11]=0.16
+				site1weight[12]=0
+				site1weight[13]=0
+				site1weight[14]=0
+				site1weight[15]=0
+				site1weight[16]=0
+				site1weight[17]=0
+				site1weight[18]=0
+				site1weight[19]=0
+				site1weight[20]=0
+				site1weight[21]=0
+				site1weight[22]=0
+				site1weight[23]=0
+				site1weight[24]=0
+				site1weight[25]=0
+				site1weight[26]=0
+				
+				;EAGL
+				site2weight[1]=0
+				site2weight[2]=0
+				site2weight[3]=0
+				site2weight[4]=0
+				site2weight[5]=0
+				site2weight[6]=0
+				site2weight[7]=0
+				site2weight[8]=0
+				site2weight[9]=0
+				site2weight[10]=0
+				site2weight[11]=0
+				site2weight[12]=0
+				site2weight[13]=0
+				site2weight[14]=0
+				site2weight[15]=0
+				site2weight[16]=0
+				site2weight[17]=0
+				site2weight[18]=0.11
+				site2weight[19]=0.26
+				site2weight[20]=0.30
+				site2weight[21]=0.48
+				site2weight[22]=0
+				site2weight[23]=0
+				site2weight[24]=0
+				site2weight[25]=0.15
+				site2weight[26]=0.84
+				
+				;YQU
+				site3weight[1]=0
+				site3weight[2]=0
+				site3weight[3]=0.36
+				site3weight[4]=0.51
+				site3weight[5]=0.44
+				site3weight[6]=0.83
+				site3weight[7]=0
+				site3weight[8]=0
+				site3weight[9]=0
+				site3weight[10]=0
+				site3weight[11]=0
+				site3weight[12]=1.00
+				site3weight[13]=0.35
+				site3weight[14]=0
+				site3weight[15]=0
+				site3weight[16]=0
+				site3weight[17]=0
+				site3weight[18]=0
+				site3weight[19]=0
+				site3weight[20]=0
+				site3weight[21]=0
+				site3weight[22]=0.08
+				site3weight[23]=0
+				site3weight[24]=0.11
+				site3weight[25]=0
+				site3weight[26]=0
+				
+				;HEND
+				site4weight[1]=1.00
+				site4weight[2]=1.00
+				site4weight[3]=0.44
+				site4weight[4]=0.31
+				site4weight[5]=0.33
+				site4weight[6]=0.08
+				site4weight[7]=0
+				site4weight[8]=0
+				site4weight[9]=0
+				site4weight[10]=0
+				site4weight[11]=0
+				site4weight[12]=0
+				site4weight[13]=0
+				site4weight[14]=0
+				site4weight[15]=0.61
+				site4weight[16]=0.22
+				site4weight[17]=0
+				site4weight[18]=0
+				site4weight[19]=0
+				site4weight[20]=0
+				site4weight[21]=0
+				site4weight[22]=0
+				site4weight[23]=0
+				site4weight[24]=0
+				site4weight[25]=0
+				site4weight[26]=0
+				
+				;GLAC
+				site5weight[1]=0
+				site5weight[2]=0
+				site5weight[3]=0
+				site5weight[4]=0
+				site5weight[5]=0
+				site5weight[6]=0
+				site5weight[7]=0.76
+				site5weight[8]=0.89
+				site5weight[9]=0.53
+				site5weight[10]=0.97
+				site5weight[11]=0.43
+				site5weight[12]=0
+				site5weight[13]=0
+				site5weight[14]=0
+				site5weight[15]=0
+				site5weight[16]=0
+				site5weight[17]=0
+				site5weight[18]=0
+				site5weight[19]=0
+				site5weight[20]=0
+				site5weight[21]=0
+				site5weight[22]=0
+				site5weight[23]=0
+				site5weight[24]=0
+				site5weight[25]=0
+				site5weight[26]=0
+				
+				;Jean Cote
+				site6weight[1]=0
+				site6weight[2]=0
+				site6weight[3]=0
+				site6weight[4]=0
+				site6weight[5]=0
+				site6weight[6]=0
+				site6weight[7]=0
+				site6weight[8]=0
+				site6weight[9]=0
+				site6weight[10]=0
+				site6weight[11]=0
+				site6weight[12]=0
+				site6weight[13]=0
+				site6weight[14]=0
+				site6weight[15]=0
+				site6weight[16]=0
+				site6weight[17]=0
+				site6weight[18]=0.09
+				site6weight[19]=0.47
+				site6weight[20]=0.15
+				site6weight[21]=0.25
+				site6weight[22]=0
+				site6weight[23]=0
+				site6weight[24]=0
+				site6weight[25]=0.04
+				site6weight[26]=0.08
+				
+				;PEOR
+				site7weight[1]=0
+				site7weight[2]=0
+				site7weight[3]=0
+				site7weight[4]=0
+				site7weight[5]=0
+				site7weight[6]=0
+				site7weight[7]=0.03
+				site7weight[8]=0.03
+				site7weight[9]=0
+				site7weight[10]=0
+				site7weight[11]=0.16
+				site7weight[12]=0
+				site7weight[13]=0
+				site7weight[14]=0
+				site7weight[15]=0
+				site7weight[16]=0
+				site7weight[17]=0
+				site7weight[18]=0.08
+				site7weight[19]=0.10
+				site7weight[20]=0.19
+				site7weight[21]=0.12
+				site7weight[22]=0.07
+				site7weight[23]=1.00
+				site7weight[24]=0.28
+				site7weight[25]=0.47
+				site7weight[26]=0.06
+				
+				;TEEP
+				site8weight[1]=0
+				site8weight[2]=0
+				site8weight[3]=0
+				site8weight[4]=0
+				site8weight[5]=0
+				site8weight[6]=0
+				site8weight[7]=0
+				site8weight[8]=0
+				site8weight[9]=0
+				site8weight[10]=0
+				site8weight[11]=0.25
+				site8weight[12]=0
+				site8weight[13]=0.45
+				site8weight[14]=0
+				site8weight[15]=0
+				site8weight[16]=0
+				site8weight[17]=0
+				site8weight[18]=0.09
+				site8weight[19]=0
+				site8weight[20]=0.15
+				site8weight[21]=0.07
+				site8weight[22]=0.85
+				site8weight[23]=0
+				site8weight[24]=0.39
+				site8weight[25]=0.28
+				site8weight[26]=0
+				
+				;VALL
+				site9weight[1]=0
+				site9weight[2]=0
+				site9weight[3]=0.20
+				site9weight[4]=0.17
+				site9weight[5]=0.23
+				site9weight[6]=0.09
+				site9weight[7]=0
+				site9weight[8]=0
+				site9weight[9]=0
+				site9weight[10]=0
+				site9weight[11]=0
+				site9weight[12]=0
+				site9weight[13]=0.20
+				site9weight[14]=1.00
+				site9weight[15]=0.39
+				site9weight[16]=0.78
+				site9weight[17]=1.00
+				site9weight[18]=0.62
+				site9weight[19]=0.17
+				site9weight[20]=0.21
+				site9weight[21]=0.08
+				site9weight[22]=0
+				site9weight[23]=0
+				site9weight[24]=0.23
+				site9weight[25]=0.05
+				site9weight[26]=0.02
+				
+				; set file headers
+				hourly_header1="Made for Smoky River Local Flow Model"
+				hourly_header2="t 26 (°C)"
+				hourly_header3="rh 26 (%)"
+				hourly_header4="u 26 (m/s)"
+				hourly_header5="$ea ea(t, rh) (kPa) vapour pressure"
+				hourly_header6="$u10 refwind(u, 2, 10, 0.5)"
+				hourly_header7="#################t_GA3	t_GA4	t_GB3	t_GB4	t_GB5	t_GE2	t_GE3	t_GE4	t_GE5	t_GE6	t_GE7	t_GE8	t_GF4	t_GG2	t_GG3	t_GG4	t_GH1	t_GH2	t_GH3	t_GH4	t_GH5	t_GJ1	t_GJ2	t_GJ3	t_GJ4	t_GJ5	rh_GA3	rh_GA4	rh_GB3	rh_GB4	rh_GB5	rh_GE2	rh_GE3	rh_GE4	rh_GE5	rh_GE6	rh_GE7	rh_GE8	rh_GF4	rh_GG2	rh_GG3	rh_GG4	rh_GH1	rh_GH2	rh_GH3	rh_GH4	rh_GH5	rh_GJ1	rh_GJ2	rh_GJ3	rh_GJ4	rh_GJ5	u_GA3	u_GA4	u_GB3	u_GB4	u_GB5	u_GE2	u_GE3	u_GE4	u_GE5	u_GE6	u_GE7	u_GE8	u_GF4	u_GG2	u_GG3	u_GG4	u_GH1	u_GH2	u_GH3	u_GH4	u_GH5	u_GJ1	u_GJ2	u_GJ3	u_GJ4	u_GJ5"
+				daily_header1="Made for Smoky River Local Flow Model"
+				daily_header2="ppt 26	(mm)"
+				daily_header3="#################p_GA3	p_GA4	p_GB3	p_GB4	p_GB5	p_GE2	p_GE3	p_GE4	p_GE5	p_GE6	p_GE7	p_GE8	p_GF4	p_GG2	p_GG3	p_GG4	p_GH1	p_GH2	p_GH3	p_GH4	p_GH5	p_GJ1	p_GJ2	p_GJ3	p_GJ4	p_GJ5"
+				
+				
+				
+				; Open files and print headings
+				If (File1 = 0) Then
+				  File1 = OPEN(HourlyObsFileName,Create)
+				  File2 = OPEN(DailyObsFileName,Create)
+				  Print(File1,hourly_header1)
+				  Print(File1,hourly_header2)
+				  Print(File1,hourly_header3)
+				  Print(File1,hourly_header4)
+				  Print(File1,hourly_header5)
+				  Print(File1,hourly_header6)
+				  Print(File1,hourly_header7)
+				
+				  Print(File2,daily_header1)
+				  Print(File2,daily_header2)
+				  Print(File2,daily_header3)
+				End If
+				
+				DayNum = DAY()
+				HourNum = HOUR()
+				MonthNum=MONTH()
+				YearNum = YEAR()
+				DayString = FORMAT_INT(DayNum, "02")
+				MonthString = FORMAT_INT(MonthNum, "02")
+				HourString = FORMAT_INT(HourNum, "02")
+				
+				; do weightings and print data
+				If (COUNT>0) Then
+				;  do  weightings for VP, then convert to RH
+				  i=1  
+				 t_string=""
+				 rh_string=""
+				 u_string=""
+				
+				 Do While (i<=num_basins)
+				    t[i]=t1*site1weight[i] + t2 * site2weight[i] +  t3 * site3weight[i] + t4 * site4weight[i] +  t5 * site5weight[i]+  t6 * site6weight[i]+  t7 * site7weight[i]+  t8 * site8weight[i]+  t9 * site9weight[i]
+				    u[i]=u1*site1weight[i] + u2 * site2weight[i] +  u3 * site3weight[i] + u4 * site4weight[i] +  u5 * site5weight[i]+  u6 * site6weight[i]+  u7 * site7weight[i]+  u8 * site8weight[i]+  u9 * site9weight[i]
+				    vp[i]=vp1*site1weight[i] + vp2 * site2weight[i] +  vp3 * site3weight[i] + vp4 * site4weight[i] +  vp5 * site5weight[i]+  vp6 * site6weight[i]+  vp7 * site7weight[i]+  vp8 * site8weight[i]+  vp9 * site9weight[i]
+				
+				    rh[i]=VP_T_to_RH(vp[i], t[i])
+				    t_string=STR_CONCAT(STR_CONCAT(t_string,tb,),FORMAT_FLOAT(t[i],"5.2"))
+				    rh_string=STR_CONCAT(STR_CONCAT(rh_string,tb,),FORMAT_FLOAT(rh[i],"5.2"))
+				    u_string=STR_CONCAT(STR_CONCAT(u_string,tb,),FORMAT_FLOAT(u[i],"5.2"))
+				    i=i+1
+				  Loop
+				
+				  Print(File1,YEAR;sp;MonthString;sp;DayString;sp;HourString;" 0";t_string;rh_string;u_string)
+				
+				; sum up hourly precipitation
+				     i=1  
+				    Do While (i<=num_basins)
+				        ppt_sum[i]=ppt_sum[i]+ppt1*site1weight[i] + ppt2 * site2weight[i] +  ppt3 * site3weight[i] + ppt4 * site4weight[i] +  ppt5 * site5weight[i] +  ppt6 * site6weight[i] +  ppt7 * site7weight[i] +  ppt8 * site8weight[i] +  ppt9 * site9weight[i]
+				       i=i+1
+				     Loop
+				
+				  If (HOUR=23) Then
+				  ; do daily weightings and ouput ppt
+				     i=1  
+				    ppt_string=""
+				    Do While (i<=num_basins)
+				       ppt_string=STR_CONCAT(STR_CONCAT(ppt_string,tb,),FORMAT_FLOAT(ppt_sum[i],"7.3"))
+				       ppt_sum[i]=0
+				       i=i+1
+				    Loop
+				    Print(File2,YEAR;sp;MonthString;sp;DayString;sp;"01 0";ppt_string)
+				  EndIf
+				
+				EndIf
+				
+				If (COUNT() > FINISH()) Then
+				  If (File1 > 0) Then
+				    Close(File1)
+				  EndIf
+				  If (File2 > 0) Then
+				    Close(File2)
+				  EndIf
+				EndIf
+				}
+			}
+		TextLabel
+			{
+			AttachedTo="CRHM_output"
+			Rect=35.325887,24.760862,56.389282,28.524986
+			MaintainAspectRatio=FALSE
+			FillColour=RGB(255,255,255)
+			BorderColour=RGB(255,255,255)
+			BorderWidth=0
+			BorderStyle=5
+			TextAlignment=1
+			}
+		Text
+			{
+			Caption=
+				{
+				Forecast
+				}
+			AttachedTo=
+			Rect=3.686636,34.173387,10.219854,36.932780
+			MaintainAspectRatio=FALSE
+			FillColour=RGB(255,255,255)
+			BorderColour=RGB(255,255,255)
+			BorderWidth=0
+			BorderStyle=0
+			TextAlignment=1
+			Font
+				{
+				FontName="Arial Narrow"
+				PointSize=120
+				TextStyle=
+				TextColour=RGB(0,0,0)
+				Height=396
+				Width=0
+				Escapement=0
+				Orientation=0
+				Weight=400
+				Italic=0
+				Underline=0
+				StrikeOut=0
+				Charset=0
+				Precision=3
+				ClipPrecision=2
+				Quality=1
+				PitchAndFamily=34
+				}
+			}
+		Text
+			{
+			Caption=
+				{
+				Measured
+				}
+			AttachedTo=
+			Rect=1.656967,79.223743,10.456515,81.259504
+			MaintainAspectRatio=FALSE
+			FillColour=RGB(255,255,255)
+			BorderColour=RGB(255,255,255)
+			BorderWidth=0
+			BorderStyle=0
+			TextAlignment=1
+			Font
+				{
+				FontName="Arial Narrow"
+				PointSize=120
+				TextStyle=
+				TextColour=RGB(0,0,0)
+				Height=396
+				Width=0
+				Escapement=0
+				Orientation=0
+				Weight=400
+				Italic=0
+				Underline=0
+				StrikeOut=0
+				Charset=0
+				Precision=3
+				ClipPrecision=2
+				Quality=1
+				PitchAndFamily=34
+				}
+			}
+		Link
+			{
+			Name="at3_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=TimeSeries(5.306,68.822,TSM(AB.MSC-003/TA/Cmd.Cor-Sensor.C),Factor(1.062900);Offset(-0.517100),Agg)
+			Output=Node(AirTemp,at3_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="at4_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(0,0,255)
+			Source=TimeSeries(6.471,77.112,TSM(AB.MSC-024/TA/Cmd.Cor-Sensor.C),Agg)
+			Output=Node(AirTemp,at4_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="at7_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(255,0,255)
+			Source=TimeSeries(18.075,76.949,TSM(AB.07GJ802/TA/Cmd.Cor-Sensor.C),Agg)
+			Output=Node(AirTemp,at7_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="at8_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(128,0,128)
+			Source=TimeSeries(21.892,76.619,TSM(AB.07GJ803/TA/Cmd.Cor-Sensor.C),Agg)
+			Output=Node(AirTemp,at8_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Text
+			{
+			Caption=
+				{
+				Measured
+				}
+			AttachedTo=
+			Rect=33.338577,71.978397,43.814252,74.296052
+			MaintainAspectRatio=FALSE
+			FillColour=RGB(255,255,255)
+			BorderColour=RGB(255,255,255)
+			BorderWidth=0
+			BorderStyle=0
+			TextAlignment=1
+			Font
+				{
+				FontName="Arial Narrow"
+				PointSize=120
+				TextStyle=
+				TextColour=RGB(0,0,0)
+				Height=396
+				Width=0
+				Escapement=0
+				Orientation=0
+				Weight=400
+				Italic=0
+				Underline=0
+				StrikeOut=0
+				Charset=0
+				Precision=3
+				ClipPrecision=2
+				Quality=1
+				PitchAndFamily=34
+				}
+			}
+		Text
+			{
+			Caption=
+				{
+				Measured
+				}
+			AttachedTo=
+			Rect=86.763366,56.825843,95.133671,58.471125
+			MaintainAspectRatio=FALSE
+			FillColour=RGB(255,255,255)
+			BorderColour=RGB(255,255,255)
+			BorderWidth=0
+			BorderStyle=0
+			TextAlignment=1
+			Font
+				{
+				FontName="Arial Narrow"
+				PointSize=120
+				TextStyle=
+				TextColour=RGB(0,0,0)
+				Height=396
+				Width=0
+				Escapement=0
+				Orientation=0
+				Weight=400
+				Italic=0
+				Underline=0
+				StrikeOut=0
+				Charset=0
+				Precision=3
+				ClipPrecision=2
+				Quality=1
+				PitchAndFamily=34
+				}
+			}
+		Text
+			{
+			Caption=
+				{
+				Forecast
+				}
+			AttachedTo=
+			Rect=64.018667,29.311338,71.941983,31.838918
+			MaintainAspectRatio=FALSE
+			FillColour=RGB(255,255,255)
+			BorderColour=RGB(255,255,255)
+			BorderWidth=0
+			BorderStyle=0
+			TextAlignment=1
+			Font
+				{
+				FontName="Arial Narrow"
+				PointSize=120
+				TextStyle=
+				TextColour=RGB(0,0,0)
+				Height=396
+				Width=0
+				Escapement=0
+				Orientation=0
+				Weight=400
+				Italic=0
+				Underline=0
+				StrikeOut=0
+				Charset=0
+				Precision=3
+				ClipPrecision=2
+				Quality=1
+				PitchAndFamily=34
+				}
+			}
+		Text
+			{
+			Caption=
+				{
+				Measured
+				}
+			AttachedTo=
+			Rect=80.601866,86.602343,89.512358,88.776882
+			MaintainAspectRatio=FALSE
+			FillColour=RGB(255,255,255)
+			BorderColour=RGB(255,255,255)
+			BorderWidth=0
+			BorderStyle=0
+			TextAlignment=1
+			Font
+				{
+				FontName="Arial Narrow"
+				PointSize=120
+				TextStyle=
+				TextColour=RGB(0,0,0)
+				Height=396
+				Width=0
+				Escapement=0
+				Orientation=0
+				Weight=400
+				Italic=0
+				Underline=0
+				StrikeOut=0
+				Charset=0
+				Precision=3
+				ClipPrecision=2
+				Quality=1
+				PitchAndFamily=34
+				}
+			}
+		Text
+			{
+			Caption=
+				{
+				Forecast
+				}
+			AttachedTo=
+			Rect=58.246867,90.315000,66.369147,92.989171
+			MaintainAspectRatio=FALSE
+			FillColour=RGB(255,255,255)
+			BorderColour=RGB(255,255,255)
+			BorderWidth=0
+			BorderStyle=0
+			TextAlignment=1
+			Font
+				{
+				FontName="Arial Narrow"
+				PointSize=120
+				TextStyle=
+				TextColour=RGB(0,0,0)
+				Height=396
+				Width=0
+				Escapement=0
+				Orientation=0
+				Weight=400
+				Italic=0
+				Underline=0
+				StrikeOut=0
+				Charset=0
+				Precision=3
+				ClipPrecision=2
+				Quality=1
+				PitchAndFamily=34
+				}
+			}
+		Link
+			{
+			Name="rh1_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(255,0,0)
+			Source=TimeSeries(28.525,61.858,TSM(AB.MSC-003/XR/Cmd.Cor-Sensor.C),Agg)
+			Output=Node(RH,rh1_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="rh3_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=TimeSeries(28.525,61.858,TSM(AB.MSC-003/XR/Cmd.Cor-Sensor.C),Factor(0.811300);Offset(14.947000),Agg)
+			Output=Node(RH,rh3_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="rh4_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(0,0,255)
+			Source=TimeSeries(31.676,74.296,TSM(AB.MSC-024/XR/Cmd.Cor-Sensor.C),Agg)
+			Output=Node(RH,rh4_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="rh7_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(255,0,255)
+			Source=TimeSeries(44.444,79.272,TSM(AB.07GJ802/XR/Cmd.Cor-Sensor.C),Agg)
+			Output=Node(RH,rh7_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="rh9_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(64,128,128)
+			Source=TimeSeries(51.930,75.542,TSM(AB.07GH802/XR/Cmd.Cor-Sensor.C),Agg)
+			Output=Node(RH,rh9_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="p1_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(255,0,0)
+			Source=TimeSeries(65.345,46.269,TSM(AB.MSC-003/PC/CmdTotal.Merged.C),Agg)
+			Output=Node(Precip,p1_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="p3_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=TimeSeries(65.345,46.269,TSM(AB.MSC-003/PC/CmdTotal.Merged.C),Factor(1.190100),Agg)
+			Output=Node(Precip,p3_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="p4_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(0,0,255)
+			Source=TimeSeries(71.480,55.057,TSM(AB.MSC-024/PC/CmdTotal.Merged.C),Agg)
+			Output=Node(Precip,p4_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="p7_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(255,0,255)
+			Source=TimeSeries(85.245,54.559,TSM(AB.07GJ802/PC/CmdTotal.Merged.C),Agg)
+			Output=Node(Precip,p7_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="p9_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(64,128,128)
+			Source=TimeSeries(93.136,47.404,TSM(AB.07GH802/PC/CmdTotal.Merged.C),Agg)
+			Output=Node(Precip,p9_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="u1_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(255,0,0)
+			Source=TimeSeries(74.700,86.236,TSM(AB.MSC-003/US/Cmd.Merged.C),Agg)
+			Output=Node(WindSpeed,u1_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="u3_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=TimeSeries(74.700,86.236,TSM(AB.MSC-003/US/Cmd.Merged.C),Factor(0.972000),Agg)
+			Output=Node(WindSpeed,u3_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="u4_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(0,0,255)
+			Source=TimeSeries(70.484,78.444,TSM(AB.MSC-003/US/Cmd.Merged.C),Agg)
+			Output=Node(WindSpeed,u4_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="u9_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(64,128,128)
+			Source=TimeSeries(88.564,64.512,TSM(AB.07GH802/US/Cmd.Merged.C),Agg)
+			Output=Node(WindSpeed,u9_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Node
+			{
+			Name="VP"
+			Description=
+				{
+				Convert air temp and RH to
+				vapour pressure 
+				}
+			Location=25.526000,52.677000
+			Type="Custom"
+			Symbols=
+				{
+				float vp1 = 0
+				float vp2 = 0
+				float vp3 = 0
+				float vp4 = 0
+				float vp5 = 0
+				float vp6 = 0
+				float vp7 = 0
+				float vp8 = 0
+				float vp9 = 0
+				}
+			Sources="rh1, rh2, rh3, rh4, rh5, t1, t2, t3, t4, t5, rh6, rh7, rh8, rh9, t6, t7, t8, t9"
+			Rule=
+				{
+				vp1=RH_T_to_VP(rh1,t1)
+				vp2=RH_T_to_VP(rh2,t2)
+				vp3=RH_T_to_VP(rh3,t3)
+				vp4=RH_T_to_VP(rh4,t4)
+				vp5=RH_T_to_VP(rh5,t5)
+				vp6=RH_T_to_VP(rh6,t6)
+				vp7=RH_T_to_VP(rh7,t7)
+				vp8=RH_T_to_VP(rh8,t8)
+				vp9=RH_T_to_VP(rh9,t9)
+				}
+			}
+		TextLabel
+			{
+			AttachedTo="VP"
+			Rect=18.096891,45.097166,23.791416,47.493685
+			MaintainAspectRatio=FALSE
+			FillColour=RGB(255,255,255)
+			BorderColour=RGB(255,255,255)
+			BorderWidth=0
+			BorderStyle=5
+			TextAlignment=1
+			}
+		Text
+			{
+			Caption=
+				{
+				Site 1 Beaver Lodge
+				}
+			AttachedTo=
+			Rect=2.402899,15.913018,51.929704,19.594854
+			MaintainAspectRatio=FALSE
+			FillColour=RGB(255,255,255)
+			BorderColour=RGB(255,255,255)
+			BorderWidth=0
+			BorderStyle=0
+			TextAlignment=0
+			Font
+				{
+				FontName="Courier New"
+				PointSize=160
+				TextStyle=
+				TextColour=RGB(255,0,0)
+				Height=528
+				Width=0
+				Escapement=0
+				Orientation=0
+				Weight=400
+				Italic=0
+				Underline=0
+				StrikeOut=0
+				Charset=0
+				Precision=3
+				ClipPrecision=2
+				Quality=1
+				PitchAndFamily=49
+				}
+			}
+		Text
+			{
+			Caption=
+				{
+				Site 3 YQU (Grande Prairie Airport)
+				}
+			AttachedTo=
+			Rect=2.515361,12.399194,50.000000,15.987946
+			MaintainAspectRatio=FALSE
+			FillColour=RGB(255,255,255)
+			BorderColour=RGB(255,255,255)
+			BorderWidth=0
+			BorderStyle=0
+			TextAlignment=0
+			Font
+				{
+				FontName="Courier New"
+				PointSize=160
+				TextStyle=
+				TextColour=RGB(0,0,0)
+				Height=528
+				Width=0
+				Escapement=0
+				Orientation=0
+				Weight=0
+				Italic=0
+				Underline=0
+				StrikeOut=0
+				Charset=0
+				Precision=0
+				ClipPrecision=0
+				Quality=0
+				PitchAndFamily=2
+				}
+			}
+		Text
+			{
+			Caption=
+				{
+				Site 4 Hendrickson Creek
+				}
+			AttachedTo=
+			Rect=50.219532,13.139245,95.670945,16.193453
+			MaintainAspectRatio=FALSE
+			FillColour=RGB(255,255,255)
+			BorderColour=RGB(255,255,255)
+			BorderWidth=0
+			BorderStyle=0
+			TextAlignment=0
+			Font
+				{
+				FontName="Courier New"
+				PointSize=160
+				TextStyle=
+				TextColour=RGB(0,0,255)
+				Height=528
+				Width=0
+				Escapement=0
+				Orientation=0
+				Weight=400
+				Italic=0
+				Underline=0
+				StrikeOut=0
+				Charset=0
+				Precision=3
+				ClipPrecision=2
+				Quality=1
+				PitchAndFamily=49
+				}
+			}
+		Text
+			{
+			Caption=
+				{
+				Site 7 Peoria AGDM
+				}
+			AttachedTo=
+			Rect=2.678571,6.365207,51.246393,9.790750
+			MaintainAspectRatio=FALSE
+			FillColour=RGB(255,255,255)
+			BorderColour=RGB(255,255,255)
+			BorderWidth=0
+			BorderStyle=0
+			TextAlignment=0
+			Font
+				{
+				FontName="Courier New"
+				PointSize=160
+				TextStyle=
+				TextColour=RGB(255,0,255)
+				Height=528
+				Width=0
+				Escapement=0
+				Orientation=0
+				Weight=400
+				Italic=0
+				Underline=0
+				StrikeOut=0
+				Charset=0
+				Precision=3
+				ClipPrecision=2
+				Quality=1
+				PitchAndFamily=49
+				}
+			}
+		Text
+			{
+			Caption=
+				{
+				Site 9 Valleyview AGDM
+				}
+			AttachedTo=
+			Rect=2.678571,3.849847,62.816820,6.267325
+			MaintainAspectRatio=FALSE
+			FillColour=RGB(255,255,255)
+			BorderColour=RGB(255,255,255)
+			BorderWidth=0
+			BorderStyle=0
+			TextAlignment=0
+			Font
+				{
+				FontName="Courier New"
+				PointSize=160
+				TextStyle=
+				TextColour=RGB(0,128,128)
+				Height=528
+				Width=0
+				Escapement=0
+				Orientation=0
+				Weight=400
+				Italic=0
+				Underline=0
+				StrikeOut=0
+				Charset=0
+				Precision=3
+				ClipPrecision=2
+				Quality=1
+				PitchAndFamily=49
+				}
+			}
+		Text
+			{
+			Caption=
+				{
+				Met Station Sites
+				}
+			AttachedTo=
+			Rect=2.846582,19.758065,63.320853,23.281490
+			MaintainAspectRatio=FALSE
+			FillColour=RGB(255,255,255)
+			BorderColour=RGB(255,255,255)
+			BorderWidth=0
+			BorderStyle=0
+			TextAlignment=0
+			Font
+				{
+				FontName="Courier New"
+				PointSize=160
+				TextStyle=
+				TextColour=RGB(0,0,0)
+				Height=528
+				Width=0
+				Escapement=0
+				Orientation=0
+				Weight=0
+				Italic=0
+				Underline=0
+				StrikeOut=0
+				Charset=0
+				Precision=0
+				ClipPrecision=0
+				Quality=0
+				PitchAndFamily=2
+				}
+			}
+		Text
+			{
+			Caption=
+				{
+				Model for creating .obs files for CRHM Smoky River Model
+				}
+			AttachedTo=
+			Rect=1.503143,94.807324,95.977954,99.236934
+			MaintainAspectRatio=FALSE
+			FillColour=RGB(255,255,255)
+			BorderColour=RGB(255,255,255)
+			BorderWidth=0
+			BorderStyle=0
+			TextAlignment=0
+			Font
+				{
+				FontName="Arial Narrow"
+				PointSize=240
+				TextStyle=
+				TextColour=RGB(0,0,0)
+				Height=792
+				Width=0
+				Escapement=0
+				Orientation=0
+				Weight=400
+				Italic=0
+				Underline=0
+				StrikeOut=0
+				Charset=0
+				Precision=3
+				ClipPrecision=2
+				Quality=1
+				PitchAndFamily=34
+				}
+			}
+		Text
+			{
+			Caption=
+				{
+				Site 2 Eaglesham
+				}
+			AttachedTo=
+			Rect=49.595492,16.673230,91.886523,19.562863
+			MaintainAspectRatio=FALSE
+			FillColour=RGB(255,255,255)
+			BorderColour=RGB(255,255,255)
+			BorderWidth=0
+			BorderStyle=0
+			TextAlignment=0
+			Font
+				{
+				FontName="Courier New"
+				PointSize=160
+				TextStyle=
+				TextColour=RGB(128,0,128)
+				Height=528
+				Width=0
+				Escapement=0
+				Orientation=0
+				Weight=400
+				Italic=0
+				Underline=0
+				StrikeOut=0
+				Charset=0
+				Precision=3
+				ClipPrecision=2
+				Quality=1
+				PitchAndFamily=49
+				}
+			}
+		Text
+			{
+			Caption=
+				{
+				Site 5 La Glace
+				}
+			AttachedTo=
+			Rect=3.027469,10.057103,50.551344,12.533228
+			MaintainAspectRatio=FALSE
+			FillColour=RGB(255,255,255)
+			BorderColour=RGB(255,255,255)
+			BorderWidth=0
+			BorderStyle=0
+			TextAlignment=0
+			Font
+				{
+				FontName="Courier New"
+				PointSize=160
+				TextStyle=
+				TextColour=RGB(0,128,0)
+				Height=528
+				Width=0
+				Escapement=0
+				Orientation=0
+				Weight=400
+				Italic=0
+				Underline=0
+				StrikeOut=0
+				Charset=0
+				Precision=3
+				ClipPrecision=2
+				Quality=1
+				PitchAndFamily=49
+				}
+			}
+		Text
+			{
+			Caption=
+				{
+				Site 6 Jean Cote
+				}
+			AttachedTo=
+			Rect=50.349190,9.613638,93.600150,12.503270
+			MaintainAspectRatio=FALSE
+			FillColour=RGB(255,255,255)
+			BorderColour=RGB(255,255,255)
+			BorderWidth=0
+			BorderStyle=0
+			TextAlignment=0
+			Font
+				{
+				FontName="Courier New"
+				PointSize=160
+				TextStyle=
+				TextColour=RGB(0,0,128)
+				Height=528
+				Width=0
+				Escapement=0
+				Orientation=0
+				Weight=400
+				Italic=0
+				Underline=0
+				StrikeOut=0
+				Charset=0
+				Precision=3
+				ClipPrecision=2
+				Quality=1
+				PitchAndFamily=49
+				}
+			}
+		Text
+			{
+			Caption=
+				{
+				Site 8 Teepee Ck
+				}
+			AttachedTo=
+			Rect=50.190511,6.389460,81.489882,9.335833
+			MaintainAspectRatio=FALSE
+			FillColour=RGB(255,255,255)
+			BorderColour=RGB(255,255,255)
+			BorderWidth=0
+			BorderStyle=0
+			TextAlignment=0
+			Font
+				{
+				FontName="Courier New"
+				PointSize=160
+				TextStyle=
+				TextColour=RGB(128,0,0)
+				Height=528
+				Width=0
+				Escapement=0
+				Orientation=0
+				Weight=400
+				Italic=0
+				Underline=0
+				StrikeOut=0
+				Charset=0
+				Precision=3
+				ClipPrecision=2
+				Quality=1
+				PitchAndFamily=49
+				}
+			}
+		TextLabel
+			{
+			AttachedTo="AirTemp"
+			Rect=5.213959,46.105288,16.753072,48.915079
+			MaintainAspectRatio=FALSE
+			FillColour=RGB(255,255,255)
+			BorderColour=RGB(255,255,255)
+			BorderWidth=0
+			BorderStyle=5
+			TextAlignment=1
+			}
+		Link
+			{
+			Name="at2_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(128,0,255)
+			Source=TimeSeries(2.828,67.825,TSM(AB.07FD806/TA/Cmd.Cor-Sensor.C),Agg)
+			Output=Node(AirTemp,at2_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="at5_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(64,128,128)
+			Source=TimeSeries(11.111,73.798,TSM(AB.07GE804/TA/Cmd.Cor-Sensor.C),Agg)
+			Output=Node(AirTemp,at5_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="at6_measuredf"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=TimeSeries(14.761,72.471,TSM(AB.07HA802/TA/Cmd.Cor-Sensor.C),Agg)
+			Output=Node(AirTemp,at6_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link46"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(AirTemp,at1.output)
+			Output=Node(VP,t1)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link110"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(AirTemp,at2.output)
+			Output=Node(VP,t2)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link111"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(AirTemp,at3.output)
+			Output=Node(VP,t3)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link112"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(AirTemp,at4.output)
+			Output=Node(VP,t4)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link113"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(AirTemp,at5.output)
+			Output=Node(VP,t5)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link114"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(AirTemp,at6.output)
+			Output=Node(VP,t6)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link115"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(AirTemp,at7.output)
+			Output=Node(VP,t7)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link116"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(AirTemp,at8.output)
+			Output=Node(VP,t8)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link117"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(AirTemp,at9.output)
+			Output=Node(VP,t9)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="at9_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(64,128,128)
+			Source=TimeSeries(22.060,67.333,TSM(AB.07GH802/TA/Cmd.Cor-Sensor.C),Agg)
+			Output=Node(AirTemp,at9_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		TextLabel
+			{
+			AttachedTo="RH"
+			Rect=35.193621,51.407897,41.293063,55.062594
+			MaintainAspectRatio=FALSE
+			FillColour=RGB(255,255,255)
+			BorderColour=RGB(255,255,255)
+			BorderWidth=0
+			BorderStyle=5
+			TextAlignment=1
+			}
+		Link
+			{
+			Name="rh2_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=TimeSeries(31.676,67.993,TSM(AB.07FD806/XR/Cmd.Cor-Sensor.C),Agg)
+			Output=Node(RH,rh2_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="rh5_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(0,128,0)
+			Source=TimeSeries(38.142,68.659,TSM(AB.07GE804/XR/Cmd.Cor-Sensor.C),Agg)
+			Output=Node(RH,rh5_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="rh8_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=TimeSeries(47.098,77.280,TSM(AB.07GJ803/XR/Cmd.Cor-Sensor.C),Agg)
+			Output=Node(RH,rh8_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link141"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(RH,rh1.output)
+			Output=Node(VP,rh1)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link142"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(RH,rh2.output)
+			Output=Node(VP,rh2)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link143"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(RH,rh3.output)
+			Output=Node(VP,rh3)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link144"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(RH,rh4.output)
+			Output=Node(VP,rh4)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link145"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(RH,rh5.output)
+			Output=Node(VP,rh5)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link146"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(RH,rh6.output)
+			Output=Node(VP,rh6)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link147"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(RH,rh7.output)
+			Output=Node(VP,rh7)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link148"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(RH,rh8.output)
+			Output=Node(VP,rh8)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link149"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(RH,rh9.output)
+			Output=Node(VP,rh9)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link150"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(VP,vp1)
+			Output=Node(CRHM_output,vp1)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link151"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(VP,vp2)
+			Output=Node(CRHM_output,vp2)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link152"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(VP,vp3)
+			Output=Node(CRHM_output,vp3)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link153"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(VP,vp4)
+			Output=Node(CRHM_output,vp4)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link154"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(VP,vp5)
+			Output=Node(CRHM_output,vp5)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link155"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(VP,vp6)
+			Output=Node(CRHM_output,vp6)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link156"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(VP,vp7)
+			Output=Node(CRHM_output,vp7)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link157"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(VP,vp8)
+			Output=Node(CRHM_output,vp8)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link158"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(VP,vp9)
+			Output=Node(CRHM_output,vp9)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="u2_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(128,0,255)
+			Source=TimeSeries(81.265,86.068,TSM(AB.07FD806/US-NS/Cmd.Merged.C),Agg)
+			Output=Node(WindSpeed,u2_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="u5_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(0,128,0)
+			Source=TimeSeries(83.750,76.619,TSM(AB.07GE804/US/Cmd.Merged.C),Agg)
+			Output=Node(WindSpeed,u5_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="u6_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(0,0,128)
+			Source=TimeSeries(73.803,75.623,TSM(AB.MSC-003/US/Cmd.Merged.C),Factor(0.842500),Agg)
+			Output=Node(WindSpeed,u6_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="u7_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(255,0,255)
+			Source=TimeSeries(86.073,70.814,TSM(AB.07GJ802/US/Cmd.Merged.C),Agg)
+			Output=Node(WindSpeed,u7_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="u8_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(128,0,128)
+			Source=TimeSeries(90.383,68.822,TSM(AB.07GJ803/US/Cmd.Merged.C),Agg)
+			Output=Node(WindSpeed,u8_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link186"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(WindSpeed,u1.output)
+			Output=Node(CRHM_output,u1)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link187"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(WindSpeed,u2.output)
+			Output=Node(CRHM_output,u2)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link188"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(WindSpeed,u3.output)
+			Output=Node(CRHM_output,u3)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link189"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(WindSpeed,u4.output)
+			Output=Node(CRHM_output,u4)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link190"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(WindSpeed,u5.output)
+			Output=Node(CRHM_output,u5)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link191"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(WindSpeed,u6.output)
+			Output=Node(CRHM_output,u6)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link192"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(WindSpeed,u7.output)
+			Output=Node(CRHM_output,u7)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link193"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(WindSpeed,u8.output)
+			Output=Node(CRHM_output,u8)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link194"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(WindSpeed,u9.output)
+			Output=Node(CRHM_output,u9)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		TextLabel
+			{
+			AttachedTo="Precip"
+			Rect=73.017519,31.148189,82.584485,33.957980
+			MaintainAspectRatio=FALSE
+			FillColour=RGB(255,255,255)
+			BorderColour=RGB(255,255,255)
+			BorderWidth=0
+			BorderStyle=5
+			TextAlignment=1
+			}
+		Link
+			{
+			Name="p2_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=TimeSeries(65.838,50.417,TSM(AB.07FD806/PC/CmdTotal.Merged.C),Agg)
+			Output=Node(Precip,p2_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="p5_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(0,128,0)
+			Source=TimeSeries(76.955,54.727,TSM(AB.07GE804/PC/CmdTotal.Merged.C),Agg)
+			Output=Node(Precip,p5_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="p6_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=TimeSeries(79.868,57.482,TSM(AB.07HA802/PC/CmdTotal.Merged.C),Agg)
+			Output=Node(Precip,p6_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="p8_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(128,0,128)
+			Source=TimeSeries(87.898,54.890,TSM(AB.07GJ803/PC/CmdTotal.Merged.C),Agg)
+			Output=Node(Precip,p8_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link205"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(Precip,p1.output)
+			Output=Node(CRHM_output,ppt1)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link206"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(Precip,p2.output)
+			Output=Node(CRHM_output,ppt2)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link207"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(Precip,p3.output)
+			Output=Node(CRHM_output,ppt3)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link208"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(Precip,p4.output)
+			Output=Node(CRHM_output,ppt4)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link209"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(Precip,p5.output)
+			Output=Node(CRHM_output,ppt5)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link210"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(Precip,p6.output)
+			Output=Node(CRHM_output,ppt6)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link211"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(Precip,p7.output)
+			Output=Node(CRHM_output,ppt7)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link212"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(Precip,p8.output)
+			Output=Node(CRHM_output,ppt8)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link213"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(Precip,p9.output)
+			Output=Node(CRHM_output,ppt9)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Text
+			{
+			Caption=
+				{
+				For creating initial state file
+				}
+			AttachedTo=
+			Rect=1.846177,89.177939,96.320988,93.607549
+			MaintainAspectRatio=FALSE
+			FillColour=RGB(255,255,255)
+			BorderColour=RGB(255,255,255)
+			BorderWidth=0
+			BorderStyle=0
+			TextAlignment=0
+			Font
+				{
+				FontName="Arial Narrow"
+				PointSize=240
+				TextStyle=
+				TextColour=RGB(0,0,0)
+				Height=792
+				Width=0
+				Escapement=0
+				Orientation=0
+				Weight=400
+				Italic=0
+				Underline=0
+				StrikeOut=0
+				Charset=0
+				Precision=3
+				ClipPrecision=2
+				Quality=1
+				PitchAndFamily=34
+				}
+			}
+		Link
+			{
+			Name="rh6_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(0,0,160)
+			Source=TimeSeries(39.804,69.986,TSM(AB.07HA802/XR/Cmd.Cor-Sensor.C),Agg)
+			Output=Node(RH,rh6_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link1"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(AirTemp,at1.output)
+			Output=Node(CRHM_output,t1)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link2"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(AirTemp,at2.output)
+			Output=Node(CRHM_output,t2)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link3"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(AirTemp,at3.output)
+			Output=Node(CRHM_output,t3)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link4"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(AirTemp,at4.output)
+			Output=Node(CRHM_output,t4)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link5"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(AirTemp,at5.output)
+			Output=Node(CRHM_output,t5)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link6"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(AirTemp,at6.output)
+			Output=Node(CRHM_output,t6)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link7"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(AirTemp,at7.output)
+			Output=Node(CRHM_output,t7)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link8"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(AirTemp,at8.output)
+			Output=Node(CRHM_output,t8)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link9"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(AirTemp,at9.output)
+			Output=Node(CRHM_output,t9)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		}
+	}
+Graph
+	{
+	YScale=Linear(0.000000,10.000000)
+	LegendHeight=0.100000
+	LegendRows=3
+	LegendCols=2
+	LabelChars=3
+	VertAnnotWidth=0.050000
+	HorizAnnotHeight=0.040000
+	TimePeriod=1
+	ReferenceTime=
+	AxisFont=
+	XGridType=1
+	YGridType=1
+	BorderColour=RGB(0,0,0)
+	FillColour=RGB(255,255,255)
+	BorderStyle=0
+	BorderWidth=1
+	FontSize=1
+	Background
+		{
+		}
+	Objects
+		{
+		}
+	}
