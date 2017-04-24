@@ -44,7 +44,7 @@ for hour in `seq -f %03.0f 0 6 $maxhours`
 # move files to directory
 
 cp *.grib2 $grib_file_path 
-rm *.grib2 
+#rm *.grib2 
 
 # read file names, lats and lons from tab delimited file
 index=0
@@ -89,6 +89,6 @@ done
  done
 
 # delete temporary files
-rm "$temp_file_path"*.tmp
+#rm "$temp_file_path"*.tmp
 # delete GRIB files
-rm "$grib_file_path"*.grib2
+#rm "$grib_file_path"*.grib2
