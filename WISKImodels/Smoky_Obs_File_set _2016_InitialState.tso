@@ -519,8 +519,8 @@ Workspace
 			Type="Custom"
 			Symbols=
 				{
-				const String HourlyObsFileName = "M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\OBSFiles\HourlyCRHMObs_InitialState.obs"
-				const String DailyObsFileName = "M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\OBSFiles\DailyCRHMObs_InitialState.obs"
+				const String HourlyObsFileName = "M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\OBSFiles\HourlyCRHMObs_2016InitialState.obs"
+				const String DailyObsFileName = "M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\OBSFiles\DailyCRHMObs_2016InitialState.obs"
 				const int num_basins = 26
 				}
 			Sources="ppt1, ppt2, ppt3, ppt4, ppt5, t1, t2, t3, t4, t5, u1, u2, u3, u4, u5, vp1, vp2, vp3, vp4, vp5, ppt6, ppt7, ppt8, ppt9, t6, t7, t8, t9, u6, u7, u8, u9, vp6, vp7, vp8, vp9"
