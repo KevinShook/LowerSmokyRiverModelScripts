@@ -12,8 +12,9 @@ Functions=
 	{
 	Function RH_T_to_VP(RH As Single, T As Single) As Single
 	 ;converts RH (as percent) and air temp (C) to VP (kPa)
+	; enforces min/max values for RH
 	  float estar
-	
+	  RH=MAX(MIN(RH,100),0)
 	  If (T <= 0) Then
 	     estar = 0.611 * EXP((21.88 * T) / ( T + 265.5))
 	  Else
@@ -181,15 +182,15 @@ Workspace
 				{
 				; check availability of at values and use best data
 				
-				float at1_lastgood
-				float at2_lastgood
-				float at3_lastgood
-				float at4_lastgood
-				float at5_lastgood
-				float at6_lastgood
-				float at7_lastgood
-				float at8_lastgood
-				float at9_lastgood
+				float at1_lastgood = -4.9
+				float at2_lastgood = -4.9
+				float at3_lastgood = -4.9
+				float at4_lastgood = -4.9
+				float at5_lastgood = -4.9
+				float at6_lastgood = -4.9
+				float at7_lastgood = -4.9
+				float at8_lastgood = -4.9
+				float at9_lastgood = -4.9
 				
 				If (IsNull(at1_measured)) Then
 				  ; if not measured or forecast, use last value
@@ -304,15 +305,15 @@ Workspace
 				{
 				; check availability of rh values and use best data
 				
-				float rh1_lastgood
-				float rh2_lastgood
-				float rh3_lastgood
-				float rh4_lastgood
-				float rh5_lastgood
-				float rh6_lastgood
-				float rh7_lastgood
-				float rh8_lastgood
-				float rh9_lastgood
+				float rh1_lastgood = 50
+				float rh2_lastgood = 50
+				float rh3_lastgood = 50
+				float rh4_lastgood = 50
+				float rh5_lastgood = 50
+				float rh6_lastgood = 50
+				float rh7_lastgood = 50
+				float rh8_lastgood = 50
+				float rh9_lastgood = 50
 				
 				If (IsNull(rh1_measured)) Then
 				    rh1.output=rh1_lastgood
@@ -386,6 +387,18 @@ Workspace
 				  rh9.output=rh9_measured
 				  rh9_lastgood=rh9_measured
 				EndIf
+				
+				; eliminate impossible values
+				 rh1.output=MAX(MIN( rh1.output,100),0)
+				 rh2.output=MAX(MIN( rh2.output,100),0)
+				 rh3.output=MAX(MIN( rh3.output,100),0)
+				 rh4.output=MAX(MIN( rh4.output,100),0)
+				 rh5.output=MAX(MIN( rh5.output,100),0)
+				 rh6.output=MAX(MIN( rh6.output,100),0)
+				 rh7.output=MAX(MIN( rh7.output,100),0)
+				 rh8.output=MAX(MIN( rh8.output,100),0)
+				 rh9.output=MAX(MIN( rh9.output,100),0)
+				
 				}
 			}
 		Node
@@ -413,88 +426,103 @@ Workspace
 			Rule=
 				{
 				; check availability of rh values and use best data
-				; converts forecast U from m/s to km/h
-				float u1_lastgood
-				float u2_lastgood
-				float u3_lastgood
-				float u4_lastgood
-				float u5_lastgood
-				float u6_lastgood
-				float u7_lastgood
-				float u8_lastgood
-				float u9_lastgood
+				; converts measured U from km/h to m/s
+				; set default lastgood value to = 10.5 km/h = 2.92 m/s, which is the March normal for Grande Prairie
+				float u1_lastgood = 2.92
+				float u2_lastgood = 2.92
+				float u3_lastgood = 2.92
+				float u4_lastgood = 2.92
+				float u5_lastgood = 2.92
+				float u6_lastgood = 2.92
+				float u7_lastgood = 2.92
+				float u8_lastgood = 2.92
+				float u9_lastgood = 2.92
 				
 				If (IsNull(u1_measured)) Then
 				    u1.output=u1_lastgood
 				Else
 				; if measured u exists, use it
-				  u1.output=u1_measured
-				  u1_lastgood=u1_measured
+				  u1.output=u1_measured / 3.6
+				  u1_lastgood=u1_measured / 3.6
 				EndIf
 				
 				If (IsNull(u2_measured)) Then
 				    u2.output=u2_lastgood
 				Else
 				; if measured u exists, use it
-				  u2.output=u2_measured
-				  u2_lastgood=u2_measured
+				  u2.output=u2_measured / 3.6
+				  u2_lastgood=u2_measured / 3.6
 				EndIf
 				
 				If (IsNull(u3_measured)) Then
 				    u3.output=u3_lastgood
 				Else
 				; if measured u exists, use it
-				  u3.output=u3_measured
-				  u3_lastgood=u3_measured
+				  u3.output=u3_measured / 3.6
+				  u3_lastgood=u3_measured / 3.6
 				EndIf
 				
 				If (IsNull(u4_measured)) Then
 				    u4.output=u4_lastgood
 				Else
 				; if measured u exists, use it
-				  u4.output=u4_measured
-				  u4_lastgood=u4_measured
+				  u4.output=u4_measured  / 3.6
+				  u4_lastgood=u4_measured / 3.6
 				EndIf
 				
 				If (IsNull(u5_measured)) Then
 				    u5.output=u5_lastgood
 				Else
 				; if measured u exists, use it
-				  u5.output=u5_measured
-				  u5_lastgood=u5_measured
+				  u5.output=u5_measured / 3.6
+				  u5_lastgood=u5_measured / 3.6
 				EndIf
 				
 				If (IsNull(u6_measured)) Then
 				    u6.output=u6_lastgood
 				Else
 				; if measured u exists, use it
-				  u6.output=u6_measured
-				  u6_lastgood=u6_measured
+				  u6.output=u6_measured / 3.6
+				  u6_lastgood=u6_measured / 3.6
 				EndIf
 				
 				If (IsNull(u7_measured)) Then
 				    u7.output=u7_lastgood
 				Else
 				; if measured u exists, use it
-				  u7.output=u7_measured
-				  u7_lastgood=u7_measured
+				  u7.output=u7_measured / 3.6
+				  u7_lastgood=u7_measured / 3.6
 				EndIf
 				
 				If (IsNull(u8_measured)) Then
 				    u8.output=u8_lastgood
 				Else
 				; if measured u exists, use it
-				  u8.output=u8_measured
-				  u8_lastgood=u8_measured
+				  u8.output=u8_measured / 3.6
+				  u8_lastgood=u8_measured / 3.6
 				EndIf
 				
 				If (IsNull(u9_measured)) Then
 				    u9.output=u9_lastgood
 				Else
 				; if measured u exists, use it
-				  u9.output=u9_measured
-				  u9_lastgood=u9_measured
+				  u9.output=u9_measured / 3.6
+				  u9_lastgood=u9_measured / 3.6
 				EndIf
+				
+				
+				; Finally eliminate impossible values
+				; From WSC climate normals, max wind speed (Jan-May) = 80 km/h = 12.12 m/s for Grande Prairie
+				  u1.output=MAX(MIN(u1.output, 12.12),0)
+				  u2.output=MAX(MIN(u2.output, 12.12),0)
+				  u3.output=MAX(MIN(u3.output, 12.12),0)
+				  u4.output=MAX(MIN(u4.output, 12.12),0)
+				  u5.output=MAX(MIN(u5.output, 12.12),0)
+				  u6.output=MAX(MIN(u6.output, 12.12),0)
+				  u7.output=MAX(MIN(u7.output, 12.12),0)
+				  u8.output=MAX(MIN(u8.output, 12.12),0)
+				  u9.output=MAX(MIN(u9.output, 12.12),0)
+				
 				}
 			}
 		TextLabel
@@ -943,7 +971,9 @@ Workspace
 				     i=1  
 				    Do While (i<=num_basins)
 				        ppt_sum[i]=ppt_sum[i]+ppt1*site1weight[i] + ppt2 * site2weight[i] +  ppt3 * site3weight[i] + ppt4 * site4weight[i] +  ppt5 * site5weight[i] +  ppt6 * site6weight[i] +  ppt7 * site7weight[i] +  ppt8 * site8weight[i] +  ppt9 * site9weight[i]
-				       i=i+1
+				     ; check for impossible values, based on max daily Grande Prairie June ppt  
+				        ppt_sum[i] = MIN(MAX(ppt_sum[i], 0),77.5)
+				        i=i+1
 				     Loop
 				
 				  If (HOUR=23) Then
