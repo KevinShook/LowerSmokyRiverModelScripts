@@ -3,8 +3,8 @@ DateFormat=British
 Description=
 	{
 	}
-Start=01/10/2012 @ 00:00:00
-Finish=01/09/2016 @ 23:00:00
+Start=28/02/(0) @ 00:00:00
+Finish=(13)/(0)/(0) @ 23:00:00
 HotStartTime=
 Step=Hourly
 HotStartFile=
@@ -87,72 +87,138 @@ Workspace
 				float p8.output = 0
 				float p9.output = 0
 				}
-			Sources="p1_measured, p2_measured, p3_measured, p5_measured, p4_measured, p6_measured, p7_measured, p8_measured, p9_measured"
+			Sources="p1_measured, p1_forecast, p2_measured, p2_forecast, p3_measured, p4_forecast, p5_measured, p5_forecast, p3_forecast, p4_measured, p6_measured, p6_forecast, p7_measured, p7_forecast, p8_measured, p8_forecast, p9_measured, p9_forecast"
 			Rule=
 				{
 				; check availability of precip values and use best data
 				If (IsNull(p1_measured)) Then
+				  If (IsNull(p1_forecast)) Then
+				  ; if not measured or forecast
 				    p1.output=0 
+				  Else
+				   ; where no measured, use forecast
+				    p1.output=p1_forecast
+				  EndIf
 				Else
 				; if measured exists, use it
 				  p1.output=p1_measured
 				EndIf
 				
 				If (IsNull(p2_measured)) Then
+				  If (IsNull(p2_forecast)) Then
+				  ; if not measured or forecast, set precip to zero
 				    p2.output=0 
+				  Else
+				   ; where no measured, use forecast
+				    p2.output=p2_forecast
+				  EndIf
 				Else
 				; if measured exists, use it
 				  p2.output=p2_measured
 				EndIf
 				
 				If (IsNull(p3_measured)) Then
+				  If (IsNull(p3_forecast)) Then
+				  ; if not measured or forecast, set precip to zero
 				    p3.output=0 
+				  Else
+				   ; where no measured, use forecast
+				    p3.output=p3_forecast
+				  EndIf
 				Else
 				; if measured exists, use it
 				  p3.output=p3_measured
 				EndIf
 				
 				If (IsNull(p4_measured)) Then
+				  If (IsNull(p4_forecast)) Then
+				  ; if not measured or forecast, set precip to zero
 				    p4.output=0 
+				  Else
+				   ; where no measured, use forecast
+				    p4.output=p4_forecast
+				  EndIf
 				Else
 				; if measured exists, use it
 				  p4.output=p4_measured
 				EndIf
 				
 				If (IsNull(p5_measured)) Then
+				  If (IsNull(p5_forecast)) Then
+				  ; if not measured or forecast, set precip to zero
 				    p5.output=0 
+				  Else
+				   ; where no measured, use forecast
+				    p5.output=p5_forecast
+				  EndIf
 				Else
 				; if measured exists, use it
 				  p5.output=p5_measured
 				EndIf
 				
 				If (IsNull(p6_measured)) Then
+				  If (IsNull(p6_forecast)) Then
+				  ; if not measured or forecast, set precip to zero
 				    p6.output=0 
+				  Else
+				   ; where no measured, use forecast
+				    p6.output=p6_forecast
+				  EndIf
 				Else
 				; if measured exists, use it
 				  p6.output=p6_measured
 				EndIf
 				
 				If (IsNull(p7_measured)) Then
+				  If (IsNull(p7_forecast)) Then
+				  ; if not measured or forecast, set precip to zero
 				    p7.output=0 
+				  Else
+				   ; where no measured, use forecast
+				    p7.output=p7_forecast
+				  EndIf
 				Else
 				; if measured exists, use it
 				  p7.output=p7_measured
 				EndIf
 				
 				If (IsNull(p8_measured)) Then
+				  If (IsNull(p8_forecast)) Then
+				  ; if not measured or forecast, set precip to zero
 				    p8.output=0 
+				  Else
+				   ; where no measured, use forecast
+				    p8.output=p8_forecast
+				  EndIf
 				Else
 				; if measured exists, use it
 				  p8.output=p8_measured
 				EndIf
 				
 				If (IsNull(p9_measured)) Then
+				  If (IsNull(p9_forecast)) Then
+				  ; if not measured or forecast, set precip to zero
 				    p9.output=0 
+				  Else
+				   ; where no measured, use forecast
+				    p9.output=p9_forecast
+				  EndIf
 				Else
 				; if measured exists, use it
 				  p9.output=p9_measured
 				EndIf
+				
+				; eliminate negative precipitation
+				; excessive daily precip is eliminated in output_node
+				  p1.output=MAX(p1.output, 0)
+				  p2.output=MAX(p2.output, 0)
+				  p3.output=MAX(p3.output, 0)
+				  p4.output=MAX(p4.output, 0)
+				  p5.output=MAX(p5.output, 0)
+				  p6.output=MAX(p6.output, 0)
+				  p7.output=MAX(p7.output, 0)
+				  p8.output=MAX(p8.output, 0)
+				  p9.output=MAX(p9.output, 0)
 				}
 			}
 		Node
@@ -162,7 +228,7 @@ Workspace
 				{
 				Combines measured and forecast AT data to produce a single time series
 				}
-			Location=10.697000,52.944000
+			Location=11.940000,53.563000
 			Type="Custom"
 			Symbols=
 				{
@@ -177,10 +243,12 @@ Workspace
 				float at9.output = 0
 				float at_offset = 0
 				}
-			Sources="at1_measured, at2_measured, at3_measured, at4_measured, at5_measured, at6_measured, at7_measured, at8_measured, at9_measured"
+			Sources="at1_measured, at1_forecast, at2_measured, at2_forecast, at3_measured, at3_forecast, at4_measured, at4_forecast, at5_measured, at5_forecast, at6_measured, at6_forecast, at7_measured, at7_forecast, at8_measured, at8_forecast, at9_measured, at9_forecast"
 			Rule=
 				{
 				; check availability of at values and use best data
+				; iniital value us set to Grande Prairie normal for March. The air temp below zero and const value prevent
+				; initial snow melt in the basin
 				
 				float at1_lastgood = -4.9
 				float at2_lastgood = -4.9
@@ -193,8 +261,14 @@ Workspace
 				float at9_lastgood = -4.9
 				
 				If (IsNull(at1_measured)) Then
+				  If (IsNull(at1_forecast)) Then
 				  ; if not measured or forecast, use last value
 				    at1.output=at1_lastgood
+				  Else
+				   ; where no measured, use forecast
+				    at1.output=at1_forecast+at_offset
+				    at1_lastgood=at1_forecast+at_offset
+				  EndIf
 				Else
 				; if measured at exists, use it
 				  at1.output=at1_measured
@@ -202,8 +276,14 @@ Workspace
 				EndIf
 				
 				If (IsNull(at2_measured)) Then
+				  If (IsNull(at2_forecast)) Then
 				  ; if not measured or forecast, use last value
 				    at2.output=at2_lastgood
+				  Else
+				   ; where no measured, use forecast
+				    at2.output=at2_forecast+at_offset
+				    at2_lastgood=at2_forecast+at_offset
+				  EndIf
 				Else
 				; if measured at exists, use it
 				  at2.output=at2_measured
@@ -211,8 +291,14 @@ Workspace
 				EndIf
 				
 				If (IsNull(at3_measured)) Then
+				  If (IsNull(at3_forecast)) Then
 				  ; if not measured or forecast, use last value
 				    at3.output=at3_lastgood
+				  Else
+				   ; where no measured, use forecast
+				    at3.output=at3_forecast+at_offset
+				    at3_lastgood=at3_forecast+at_offset
+				  EndIf
 				Else
 				; if measured at exists, use it
 				  at3.output=at3_measured
@@ -220,8 +306,14 @@ Workspace
 				EndIf
 				
 				If (IsNull(at4_measured)) Then
+				  If (IsNull(at4_forecast)) Then
 				  ; if not measured or forecast, use last value
 				    at4.output=at4_lastgood
+				  Else
+				   ; where no measured, use forecast
+				    at4.output=at4_forecast+at_offset
+				    at4_lastgood=at4_forecast+at_offset
+				  EndIf
 				Else
 				; if measured at exists, use it
 				  at4.output=at4_measured
@@ -229,8 +321,14 @@ Workspace
 				EndIf
 				
 				If (IsNull(at5_measured)) Then
+				  If (IsNull(at5_forecast)) Then
 				  ; if not measured or forecast, use last value
 				    at5.output=at5_lastgood
+				  Else
+				   ; where no measured, use forecast
+				    at5.output=at5_forecast+at_offset
+				    at5_lastgood=at5_forecast+at_offset
+				  EndIf
 				Else
 				; if measured at exists, use it
 				  at5.output=at5_measured
@@ -238,8 +336,14 @@ Workspace
 				EndIf
 				
 				If (IsNull(at6_measured)) Then
+				  If (IsNull(at6_forecast)) Then
 				  ; if not measured or forecast, use last value
 				    at6.output=at6_lastgood
+				  Else
+				   ; where no measured, use forecast
+				    at6.output=at6_forecast+at_offset
+				    at6_lastgood=at6_forecast+at_offset
+				  EndIf
 				Else
 				; if measured at exists, use it
 				  at6.output=at6_measured
@@ -247,8 +351,14 @@ Workspace
 				EndIf
 				
 				If (IsNull(at7_measured)) Then
+				  If (IsNull(at7_forecast)) Then
 				  ; if not measured or forecast, use last value
 				    at7.output=at7_lastgood
+				  Else
+				   ; where no measured, use forecast
+				    at7.output=at7_forecast+at_offset
+				    at7_lastgood=at7_forecast+at_offset
+				  EndIf
 				Else
 				; if measured at exists, use it
 				  at7.output=at7_measured
@@ -256,8 +366,14 @@ Workspace
 				EndIf
 				
 				If (IsNull(at8_measured)) Then
+				  If (IsNull(at8_forecast)) Then
 				  ; if not measured or forecast, use last value
 				    at8.output=at8_lastgood
+				  Else
+				   ; where no measured, use forecast
+				    at8.output=at8_forecast+at_offset
+				    at8_lastgood=at8_forecast+at_offset
+				  EndIf
 				Else
 				; if measured at exists, use it
 				  at8.output=at8_measured
@@ -265,8 +381,14 @@ Workspace
 				EndIf
 				
 				If (IsNull(at9_measured)) Then
+				  If (IsNull(at9_forecast)) Then
 				  ; if not measured or forecast, use last value
 				    at9.output=at9_lastgood
+				  Else
+				   ; where no measured, use forecast
+				    at9.output=at9_forecast+at_offset
+				    at9_lastgood=at9_forecast+at_offset
+				  EndIf
 				Else
 				; if measured at exists, use it
 				  at9.output=at9_measured
@@ -274,9 +396,36 @@ Workspace
 				EndIf
 				
 				
-				
-				
-				
+				;eliminate impossible values
+				;based on climate normals for Grande Prairie (Feb-May)
+				at1.output=MIN(MAX(at1.output, -48.3), 31.3)
+				at2.output=MIN(MAX(at2.output, -48.3), 31.3)
+				at3.output=MIN(MAX(at3.output, -48.3), 31.3)
+				at4.output=MIN(MAX(at4.output, -48.3), 31.3)
+				at5.output=MIN(MAX(at5.output, -48.3), 31.3)
+				at6.output=MIN(MAX(at6.output, -48.3), 31.3)
+				at7.output=MIN(MAX(at7.output, -48.3), 31.3)
+				at8.output=MIN(MAX(at8.output, -48.3), 31.3)
+				at9.output=MIN(MAX(at9.output, -48.3), 31.3)
+				}
+			}
+		Link
+			{
+			Name="at1_forecast"
+			Description=
+				{
+				}
+			ObjectColour=RGB(255,0,0)
+			Source=TimeSeries(17.246,41.791,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\BeaverlodgeRCS_AT_Forecast.tsf),Inst)
+			Output=Node(AirTemp,at1_forecast)
+			Type="Custom"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
 				}
 			}
 		Node
@@ -286,7 +435,7 @@ Workspace
 				{
 				Combines measured and forecast RH data to produce a single time series
 				}
-			Location=41.217000,59.119000
+			Location=41.214000,59.116000
 			Type="Custom"
 			Symbols=
 				{
@@ -300,10 +449,11 @@ Workspace
 				float rh8.output = 0
 				float rh9.output = 0
 				}
-			Sources="rh1_measured, rh2_measured, rh3_measured, rh4_measured, rh5_measured, rh6_measured, rh7_measured, rh8_measured, rh9_measured"
+			Sources="rh1_measured, rh1_forecast, rh2_measured, rh2_forecast, rh3_measured, rh3_forecast, rh4_measured, rh4_forecast, rh5_measured, rh5_forecast, rh6_measured, rh6_forecast, rh7_measured, rh7_forecast, rh8_measured, rh8_forecast, rh9_measured, rh9_forecast"
 			Rule=
 				{
 				; check availability of rh values and use best data
+				; default last good value is set to 50% for first inteval
 				
 				float rh1_lastgood = 50
 				float rh2_lastgood = 50
@@ -316,16 +466,29 @@ Workspace
 				float rh9_lastgood = 50
 				
 				If (IsNull(rh1_measured)) Then
+				  If (IsNull(rh1_forecast)) Then
+				  ; if not measured or forecast, use last value
 				    rh1.output=rh1_lastgood
+				  Else
+				   ; where no measured, use forecast
+				    rh1.output=rh1_forecast
+				    rh1_lastgood=rh1_forecast
+				  EndIf
 				Else
 				; if measured rh exists, use it
 				  rh1.output=rh1_measured
 				  rh1_lastgood=rh1_measured
 				EndIf
 				
-				
 				If (IsNull(rh2_measured)) Then
+				  If (IsNull(rh2_forecast)) Then
+				  ; if not measured or forecast, use last value
 				    rh2.output=rh2_lastgood
+				  Else
+				   ; where no measured, use forecast
+				    rh2.output=rh2_forecast
+				    rh2_lastgood=rh2_forecast
+				  EndIf
 				Else
 				; if measured rh exists, use it
 				  rh2.output=rh2_measured
@@ -333,7 +496,14 @@ Workspace
 				EndIf
 				
 				If (IsNull(rh3_measured)) Then
+				  If (IsNull(rh3_forecast)) Then
+				  ; if not measured or forecast, use last value
 				    rh3.output=rh3_lastgood
+				  Else
+				   ; where no measured, use forecast
+				    rh3.output=rh3_forecast
+				    rh3_lastgood=rh3_forecast
+				  EndIf
 				Else
 				; if measured rh exists, use it
 				  rh3.output=rh3_measured
@@ -341,7 +511,14 @@ Workspace
 				EndIf
 				
 				If (IsNull(rh4_measured)) Then
+				  If (IsNull(rh4_forecast)) Then
+				  ; if not measured or forecast, use last value
 				    rh4.output=rh4_lastgood
+				  Else
+				   ; where no measured, use forecast
+				    rh4.output=rh4_forecast
+				    rh4_lastgood=rh4_forecast
+				  EndIf
 				Else
 				; if measured rh exists, use it
 				  rh4.output=rh4_measured
@@ -349,7 +526,14 @@ Workspace
 				EndIf
 				
 				If (IsNull(rh5_measured)) Then
+				  If (IsNull(rh5_forecast)) Then
+				  ; if not measured or forecast, use last value
 				    rh5.output=rh5_lastgood
+				  Else
+				   ; where no measured, use forecast
+				    rh5.output=rh5_forecast
+				    rh5_lastgood=rh5_forecast
+				  EndIf
 				Else
 				; if measured rh exists, use it
 				  rh5.output=rh5_measured
@@ -357,7 +541,14 @@ Workspace
 				EndIf
 				
 				If (IsNull(rh6_measured)) Then
+				  If (IsNull(rh6_forecast)) Then
+				  ; if not measured or forecast, use last value
 				    rh6.output=rh6_lastgood
+				  Else
+				   ; where no measured, use forecast
+				    rh6.output=rh6_forecast
+				    rh6_lastgood=rh6_forecast
+				  EndIf
 				Else
 				; if measured rh exists, use it
 				  rh6.output=rh6_measured
@@ -365,7 +556,14 @@ Workspace
 				EndIf
 				
 				If (IsNull(rh7_measured)) Then
+				  If (IsNull(rh7_forecast)) Then
+				  ; if not measured or forecast, use last value
 				    rh7.output=rh7_lastgood
+				  Else
+				   ; where no measured, use forecast
+				    rh7.output=rh7_forecast
+				    rh7_lastgood=rh7_forecast
+				  EndIf
 				Else
 				; if measured rh exists, use it
 				  rh7.output=rh7_measured
@@ -373,7 +571,14 @@ Workspace
 				EndIf
 				
 				If (IsNull(rh8_measured)) Then
+				  If (IsNull(rh8_forecast)) Then
+				  ; if not measured or forecast, use last value
 				    rh8.output=rh8_lastgood
+				  Else
+				   ; where no measured, use forecast
+				    rh8.output=rh8_forecast
+				    rh8_lastgood=rh8_forecast
+				  EndIf
 				Else
 				; if measured rh exists, use it
 				  rh8.output=rh8_measured
@@ -381,7 +586,14 @@ Workspace
 				EndIf
 				
 				If (IsNull(rh9_measured)) Then
+				  If (IsNull(rh9_forecast)) Then
+				  ; if not measured or forecast, use last value
 				    rh9.output=rh9_lastgood
+				  Else
+				   ; where no measured, use forecast
+				    rh9.output=rh9_forecast
+				    rh9_lastgood=rh9_forecast
+				  EndIf
 				Else
 				; if measured rh exists, use it
 				  rh9.output=rh9_measured
@@ -422,7 +634,7 @@ Workspace
 				float u8.output = 0
 				float u9.output = 0
 				}
-			Sources="u1_measured, u2_measured, u3_measured, u4_measured, u5_measured, u6_measured, u7_measured, u8_measured, u9_measured"
+			Sources="u1_measured, u1_forecast, u2_measured, u2_forecast, u3_measured, u3_forecast, u4_measured, u4_forecast, u5_measured, u5_forecast, u6_measured, u6_forecast, u7_measured, u7_forecast, u8_measured, u8_forecast, u9_measured, u9_forecast"
 			Rule=
 				{
 				; check availability of rh values and use best data
@@ -439,7 +651,14 @@ Workspace
 				float u9_lastgood = 2.92
 				
 				If (IsNull(u1_measured)) Then
+				  If (IsNull(u1_forecast)) Then
+				  ; if not measured or forecast, use last value
 				    u1.output=u1_lastgood
+				  Else
+				   ; where no measured, use forecast, converted from m/s to km/h
+				    u1.output=u1_forecast
+				    u1_lastgood=u1_forecast
+				  EndIf
 				Else
 				; if measured u exists, use it
 				  u1.output=u1_measured / 3.6
@@ -447,7 +666,14 @@ Workspace
 				EndIf
 				
 				If (IsNull(u2_measured)) Then
+				  If (IsNull(u2_forecast)) Then
+				  ; if not measured or forecast, use last value
 				    u2.output=u2_lastgood
+				  Else
+				   ; where no measured, use forecast
+				    u2.output=u2_forecast
+				    u2_lastgood=u2_forecast
+				  EndIf
 				Else
 				; if measured u exists, use it
 				  u2.output=u2_measured / 3.6
@@ -455,7 +681,14 @@ Workspace
 				EndIf
 				
 				If (IsNull(u3_measured)) Then
+				  If (IsNull(u3_forecast)) Then
+				  ; if not measured or forecast, use last value
 				    u3.output=u3_lastgood
+				  Else
+				   ; where no measured, use forecast
+				    u3.output=u3_forecast
+				    u3_lastgood=u3_forecast
+				  EndIf
 				Else
 				; if measured u exists, use it
 				  u3.output=u3_measured / 3.6
@@ -463,7 +696,14 @@ Workspace
 				EndIf
 				
 				If (IsNull(u4_measured)) Then
+				  If (IsNull(u4_forecast)) Then
+				  ; if not measured or forecast, use last value
 				    u4.output=u4_lastgood
+				  Else
+				   ; where no measured, use forecast
+				    u4.output=u4_forecast
+				    u4_lastgood=u4_forecast
+				  EndIf
 				Else
 				; if measured u exists, use it
 				  u4.output=u4_measured  / 3.6
@@ -471,39 +711,78 @@ Workspace
 				EndIf
 				
 				If (IsNull(u5_measured)) Then
+				  If (IsNull(u5_forecast)) Then
+				  ; if not measured or forecast, use last value
 				    u5.output=u5_lastgood
+				  Else
+				   ; where no measured, use forecast
+				    u5.output=u5_forecast
+				    u5_lastgood=u5_forecast
+				  EndIf
 				Else
 				; if measured u exists, use it
 				  u5.output=u5_measured / 3.6
 				  u5_lastgood=u5_measured / 3.6
 				EndIf
 				
+				
 				If (IsNull(u6_measured)) Then
+				  If (IsNull(u6_forecast)) Then
+				  ; if not measured or forecast, use last value
 				    u6.output=u6_lastgood
+				  Else
+				   ; where no measured, use forecast
+				    u6.output=u6_forecast
+				    u6_lastgood=u6_forecast
+				  EndIf
 				Else
 				; if measured u exists, use it
 				  u6.output=u6_measured / 3.6
 				  u6_lastgood=u6_measured / 3.6
 				EndIf
 				
+				
 				If (IsNull(u7_measured)) Then
+				  If (IsNull(u7_forecast)) Then
+				  ; if not measured or forecast, use last value
 				    u7.output=u7_lastgood
+				  Else
+				   ; where no measured, use forecast
+				    u7.output=u7_forecast
+				    u7_lastgood=u7_forecast
+				  EndIf
 				Else
 				; if measured u exists, use it
 				  u7.output=u7_measured / 3.6
 				  u7_lastgood=u7_measured / 3.6
 				EndIf
 				
+				
 				If (IsNull(u8_measured)) Then
+				  If (IsNull(u8_forecast)) Then
+				  ; if not measured or forecast, use last value
 				    u8.output=u8_lastgood
+				  Else
+				   ; where no measured, use forecast
+				    u8.output=u8_forecast
+				    u8_lastgood=u8_forecast
+				  EndIf
 				Else
 				; if measured u exists, use it
 				  u8.output=u8_measured / 3.6
 				  u8_lastgood=u8_measured / 3.6
 				EndIf
 				
+				
 				If (IsNull(u9_measured)) Then
+				  If (IsNull(u9_forecast)) Then
+				  ; if not measured or forecast, use last value
 				    u9.output=u9_lastgood
+				  Else
+				   ; where no measured, use forecast
+				    u9.output=u9_forecast
+				    u9_lastgood=u9_forecast
+				  EndIf
 				Else
 				; if measured u exists, use it
 				  u9.output=u9_measured / 3.6
@@ -547,8 +826,8 @@ Workspace
 			Type="Custom"
 			Symbols=
 				{
-				const String HourlyObsFileName = "M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\OBSFiles\HourlyCRHMObs_2016InitialState.obs"
-				const String DailyObsFileName = "M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\OBSFiles\DailyCRHMObs_2016InitialState.obs"
+				const String HourlyObsFileName = "M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\OBSFiles\HourlyCRHMObs_Forecasts.obs"
+				const String DailyObsFileName = "M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\OBSFiles\DailyCRHMObs_Forecasts.obs"
 				const int num_basins = 26
 				}
 			Sources="ppt1, ppt2, ppt3, ppt4, ppt5, t1, t2, t3, t4, t5, u1, u2, u3, u4, u5, vp1, vp2, vp3, vp4, vp5, ppt6, ppt7, ppt8, ppt9, t6, t7, t8, t9, u6, u7, u8, u9, vp6, vp7, vp8, vp9"
@@ -957,8 +1236,8 @@ Workspace
 				    t[i]=t1*site1weight[i] + t2 * site2weight[i] +  t3 * site3weight[i] + t4 * site4weight[i] +  t5 * site5weight[i]+  t6 * site6weight[i]+  t7 * site7weight[i]+  t8 * site8weight[i]+  t9 * site9weight[i]
 				    u[i]=u1*site1weight[i] + u2 * site2weight[i] +  u3 * site3weight[i] + u4 * site4weight[i] +  u5 * site5weight[i]+  u6 * site6weight[i]+  u7 * site7weight[i]+  u8 * site8weight[i]+  u9 * site9weight[i]
 				    vp[i]=vp1*site1weight[i] + vp2 * site2weight[i] +  vp3 * site3weight[i] + vp4 * site4weight[i] +  vp5 * site5weight[i]+  vp6 * site6weight[i]+  vp7 * site7weight[i]+  vp8 * site8weight[i]+  vp9 * site9weight[i]
-				
 				    rh[i]=VP_T_to_RH(vp[i], t[i])
+				
 				    t_string=STR_CONCAT(STR_CONCAT(t_string,tb,),FORMAT_FLOAT(t[i],"5.2"))
 				    rh_string=STR_CONCAT(STR_CONCAT(rh_string,tb,),FORMAT_FLOAT(rh[i],"5.2"))
 				    u_string=STR_CONCAT(STR_CONCAT(u_string,tb,),FORMAT_FLOAT(u[i],"5.2"))
@@ -1031,7 +1310,7 @@ Workspace
 				PointSize=120
 				TextStyle=
 				TextColour=RGB(0,0,0)
-				Height=396
+				Height=504
 				Width=0
 				Escapement=0
 				Orientation=0
@@ -1044,6 +1323,65 @@ Workspace
 				ClipPrecision=2
 				Quality=1
 				PitchAndFamily=34
+				}
+			}
+		Link
+			{
+			Name="at3_forecast"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=TimeSeries(12.438,40.632,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\GrandePrairieAirport_AT_Forecast.tsf),Inst)
+			Output=Node(AirTemp,at3_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="at4_forecast"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(0,0,255)
+			Source=TimeSeries(9.454,41.125,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\HendricksonCreek_AT_Forecast.tsf),Inst)
+			Output=Node(AirTemp,at4_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="at5_forecast"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(0,128,128)
+			Source=TimeSeries(7.462,42.452,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\LaGlaceAGDM_AT_Forecast.tsf),Agg)
+			Output=Node(AirTemp,at5_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
 				}
 			}
 		Text
@@ -1066,7 +1404,7 @@ Workspace
 				PointSize=120
 				TextStyle=
 				TextColour=RGB(0,0,0)
-				Height=396
+				Height=504
 				Width=0
 				Escapement=0
 				Orientation=0
@@ -1079,6 +1417,26 @@ Workspace
 				ClipPrecision=2
 				Quality=1
 				PitchAndFamily=34
+				}
+			}
+		Link
+			{
+			Name="at1_measured"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(255,0,0)
+			Source=TimeSeries(4.305,57.658,TSM(S000.BER_OJP_00/TA_09_OJ2/04.F.0030),Agg)
+			Output=Node(AirTemp,at1_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
 				}
 			}
 		Link
@@ -1160,6 +1518,64 @@ Workspace
 				{
 				}
 			}
+		Node
+			{
+			Name="WindForecast"
+			Description=
+				{
+				Simple "direct connect" node
+				}
+			Location=60.857000,76.273000
+			Type="Custom"
+			Symbols=
+				{
+				float u1.output = 0
+				float u2.output = 0
+				float u3.output = 0
+				float u4.output = 0
+				float u5.output = 0
+				float u6.output = 0
+				float u7.output = 0
+				float u8.output = 0
+				float u9.output = 0
+				}
+			Sources="u1.input, v1.input, u2.input, v2.input, u3.input, v3.input, u4.input, v4.input, u5.input, v5.input, u6.input, v6.input, u7.input, v7.input, u8.input, v8.input, u9.input, v9.input"
+			Rule=
+				{
+				; Calculate forecast wind speeds from forecast vectors
+				
+				u1.output =((u1.input ^ 2)+(v1.input^2))^0.5
+				u2.output =((u2.input ^ 2)+(v2.input^2))^0.5
+				u3.output =((u3.input ^ 2)+(v3.input^2))^0.5
+				u4.output =((u4.input ^ 2)+(v4.input^2))^0.5
+				u5.output =((u5.input ^ 2)+(v5.input^2))^0.5
+				u6.output =((u6.input ^ 2)+(v6.input^2))^0.5
+				u7.output =((u7.input ^ 2)+(v7.input^2))^0.5
+				u8.output =((u8.input ^ 2)+(v8.input^2))^0.5
+				u9.output =((u9.input ^ 2)+(v9.input^2))^0.5
+				
+				}
+			}
+		Link
+			{
+			Name="rh1_forecast"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(255,0,0)
+			Source=TimeSeries(50.915,54.727,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\BeaverlodgeRCS_RH_Forecast.tsf),Inst)
+			Output=Node(RH,rh1_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
 		Text
 			{
 			Caption=
@@ -1180,7 +1596,42 @@ Workspace
 				PointSize=120
 				TextStyle=
 				TextColour=RGB(0,0,0)
-				Height=396
+				Height=504
+				Width=0
+				Escapement=0
+				Orientation=0
+				Weight=400
+				Italic=0
+				Underline=0
+				StrikeOut=0
+				Charset=0
+				Precision=3
+				ClipPrecision=2
+				Quality=1
+				PitchAndFamily=34
+				}
+			}
+		Text
+			{
+			Caption=
+				{
+				Forecast
+				}
+			AttachedTo=
+			Rect=37.813079,46.594305,45.935359,49.745687
+			MaintainAspectRatio=FALSE
+			FillColour=RGB(255,255,255)
+			BorderColour=RGB(255,255,255)
+			BorderWidth=0
+			BorderStyle=0
+			TextAlignment=1
+			Font
+				{
+				FontName="Arial Narrow"
+				PointSize=120
+				TextStyle=
+				TextColour=RGB(0,0,0)
+				Height=504
 				Width=0
 				Escapement=0
 				Orientation=0
@@ -1215,7 +1666,7 @@ Workspace
 				PointSize=120
 				TextStyle=
 				TextColour=RGB(0,0,0)
-				Height=396
+				Height=504
 				Width=0
 				Escapement=0
 				Orientation=0
@@ -1250,7 +1701,7 @@ Workspace
 				PointSize=120
 				TextStyle=
 				TextColour=RGB(0,0,0)
-				Height=396
+				Height=504
 				Width=0
 				Escapement=0
 				Orientation=0
@@ -1285,7 +1736,7 @@ Workspace
 				PointSize=120
 				TextStyle=
 				TextColour=RGB(0,0,0)
-				Height=396
+				Height=504
 				Width=0
 				Escapement=0
 				Orientation=0
@@ -1320,7 +1771,7 @@ Workspace
 				PointSize=120
 				TextStyle=
 				TextColour=RGB(0,0,0)
-				Height=396
+				Height=504
 				Width=0
 				Escapement=0
 				Orientation=0
@@ -1333,6 +1784,65 @@ Workspace
 				ClipPrecision=2
 				Quality=1
 				PitchAndFamily=34
+				}
+			}
+		Link
+			{
+			Name="rh3_forecast"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=TimeSeries(47.098,52.236,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\GrandePrairieAirport_RH_Forecast.tsf),Inst)
+			Output=Node(RH,rh3_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="rh4_forecast"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(0,0,255)
+			Source=TimeSeries(47.098,49.090,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\HendricksonCreek_RH_Forecast.tsf),Inst)
+			Output=Node(RH,rh4_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="rh7_forecast"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(255,0,255)
+			Source=TimeSeries(39.966,48.094,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\PeoriaAGDM_RH_Forecast.tsf),Inst)
+			Output=Node(RH,rh7_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
 				}
 			}
 		Link
@@ -1424,6 +1934,313 @@ Workspace
 			ObjectColour=RGB(64,128,128)
 			Source=TimeSeries(51.930,75.542,TSM(AB.07GH802/XR/Cmd.Cor-Sensor.C),Agg)
 			Output=Node(RH,rh9_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link28"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(255,0,0)
+			Source=TimeSeries(52.257,79.134,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\BeaverlodgeRCS_U_Forecast.tsf),Inst)
+			Output=Node(WindForecast,u1.input)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Text
+			{
+			Caption=
+				{
+				U
+				}
+			AttachedTo=
+			Rect=52.785276,85.090246,55.611559,88.020475
+			MaintainAspectRatio=FALSE
+			FillColour=RGB(255,255,255)
+			BorderColour=RGB(255,255,255)
+			BorderWidth=0
+			BorderStyle=0
+			TextAlignment=1
+			Font
+				{
+				FontName="Arial Narrow"
+				PointSize=120
+				TextStyle=
+				TextColour=RGB(0,0,0)
+				Height=504
+				Width=0
+				Escapement=0
+				Orientation=0
+				Weight=400
+				Italic=0
+				Underline=0
+				StrikeOut=0
+				Charset=0
+				Precision=3
+				ClipPrecision=2
+				Quality=1
+				PitchAndFamily=34
+				}
+			}
+		Text
+			{
+			Caption=
+				{
+				V
+				}
+			AttachedTo=
+			Rect=67.009701,86.908019,70.833100,89.972758
+			MaintainAspectRatio=FALSE
+			FillColour=RGB(255,255,255)
+			BorderColour=RGB(255,255,255)
+			BorderWidth=0
+			BorderStyle=0
+			TextAlignment=1
+			Font
+				{
+				FontName="Arial Narrow"
+				PointSize=120
+				TextStyle=
+				TextColour=RGB(0,0,0)
+				Height=504
+				Width=0
+				Escapement=0
+				Orientation=0
+				Weight=400
+				Italic=0
+				Underline=0
+				StrikeOut=0
+				Charset=0
+				Precision=3
+				ClipPrecision=2
+				Quality=1
+				PitchAndFamily=34
+				}
+			}
+		Link
+			{
+			Name="Link29"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=TimeSeries(52.768,82.304,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\GrandePrairieAirport_U_Forecast.tsf),Inst)
+			Output=Node(WindForecast,u3.input)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link30"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(0,0,255)
+			Source=TimeSeries(54.583,82.736,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\HendricksonCreek_U_Forecast.tsf),Inst)
+			Output=Node(WindForecast,u4.input)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link31"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(255,0,255)
+			Source=TimeSeries(56.830,84.727,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\PeoriaAGDM_U_Forecast.tsf),Inst)
+			Output=Node(WindForecast,u7.input)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link32"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(64,128,128)
+			Source=TimeSeries(58.821,87.146,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\ValleyviewAGDM_U_Forecast.tsf),Inst)
+			Output=Node(WindForecast,u9.input)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link33"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(255,0,0)
+			Source=TimeSeries(63.851,87.064,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\BeaverlodgeRCS_V_Forecast.tsf),Agg)
+			Output=Node(WindForecast,v1.input)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link34"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=TimeSeries(66.174,85.738,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\GrandePrairieAirport_V_Forecast.tsf),Inst)
+			Output=Node(WindForecast,v3.input)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link35"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(0,0,255)
+			Source=TimeSeries(67.663,85.077,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\HendricksonCreek_V_Forecast.tsf),Inst)
+			Output=Node(WindForecast,v4.input)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link36"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(255,0,255)
+			Source=TimeSeries(68.827,80.761,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\PeoriaAGDM_V_Forecast.tsf),Inst)
+			Output=Node(WindForecast,v7.input)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link37"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(64,128,128)
+			Source=TimeSeries(67.831,77.280,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\ValleyviewAGDM_V_Forecast.tsf),Inst)
+			Output=Node(WindForecast,v9.input)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="p1_forecast"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(255,0,0)
+			Source=TimeSeries(87.730,34.330,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\BeaverlodgeRCS_PR_Forecast.tsf),Inst)
+			Output=Node(Precip,p1_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="p3_forecast"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=TimeSeries(85.743,30.512,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\GrandePrairieAirport_PR_Forecast.tsf),Inst)
+			Output=Node(Precip,p3_forecast)
 			Type="Default"
 			Routing=NULL
 			Output="Source"
@@ -1679,7 +2496,7 @@ Workspace
 				PointSize=160
 				TextStyle=
 				TextColour=RGB(255,0,0)
-				Height=528
+				Height=672
 				Width=0
 				Escapement=0
 				Orientation=0
@@ -1714,7 +2531,7 @@ Workspace
 				PointSize=160
 				TextStyle=
 				TextColour=RGB(0,0,0)
-				Height=528
+				Height=672
 				Width=0
 				Escapement=0
 				Orientation=0
@@ -1749,7 +2566,7 @@ Workspace
 				PointSize=160
 				TextStyle=
 				TextColour=RGB(0,0,255)
-				Height=528
+				Height=672
 				Width=0
 				Escapement=0
 				Orientation=0
@@ -1784,7 +2601,7 @@ Workspace
 				PointSize=160
 				TextStyle=
 				TextColour=RGB(255,0,255)
-				Height=528
+				Height=672
 				Width=0
 				Escapement=0
 				Orientation=0
@@ -1819,7 +2636,7 @@ Workspace
 				PointSize=160
 				TextStyle=
 				TextColour=RGB(0,128,128)
-				Height=528
+				Height=672
 				Width=0
 				Escapement=0
 				Orientation=0
@@ -1854,7 +2671,7 @@ Workspace
 				PointSize=160
 				TextStyle=
 				TextColour=RGB(0,0,0)
-				Height=528
+				Height=672
 				Width=0
 				Escapement=0
 				Orientation=0
@@ -1889,7 +2706,7 @@ Workspace
 				PointSize=240
 				TextStyle=
 				TextColour=RGB(0,0,0)
-				Height=792
+				Height=1008
 				Width=0
 				Escapement=0
 				Orientation=0
@@ -1924,7 +2741,7 @@ Workspace
 				PointSize=160
 				TextStyle=
 				TextColour=RGB(128,0,128)
-				Height=528
+				Height=672
 				Width=0
 				Escapement=0
 				Orientation=0
@@ -1959,7 +2776,7 @@ Workspace
 				PointSize=160
 				TextStyle=
 				TextColour=RGB(0,128,0)
-				Height=528
+				Height=672
 				Width=0
 				Escapement=0
 				Orientation=0
@@ -1994,7 +2811,7 @@ Workspace
 				PointSize=160
 				TextStyle=
 				TextColour=RGB(0,0,128)
-				Height=528
+				Height=672
 				Width=0
 				Escapement=0
 				Orientation=0
@@ -2029,7 +2846,7 @@ Workspace
 				PointSize=160
 				TextStyle=
 				TextColour=RGB(128,0,0)
-				Height=528
+				Height=672
 				Width=0
 				Escapement=0
 				Orientation=0
@@ -2042,6 +2859,106 @@ Workspace
 				ClipPrecision=2
 				Quality=1
 				PitchAndFamily=49
+				}
+			}
+		Link
+			{
+			Name="at2_forecast"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(128,0,255)
+			Source=TimeSeries(14.262,40.963,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\EagleshamAGDM_AT_Forecast.tsf),Agg)
+			Output=Node(AirTemp,at2_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="at6_forecast"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(0,0,160)
+			Source=TimeSeries(4.310,42.289,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\JeanCoteAGDM_AT_Forecast.tsf),Agg)
+			Output=Node(AirTemp,at6_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="at7_forecast"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(255,0,255)
+			Source=TimeSeries(2.828,44.775,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\PeoriaAGDM_AT_Forecast.tsf),Agg)
+			Output=Node(AirTemp,at7_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="at8_forecast"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(128,0,64)
+			Source=TimeSeries(3.650,45.939,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\TeepeeCreekAGDM_AT_Forecast.tsf),Agg)
+			Output=Node(AirTemp,at8_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="at9_forecast"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(64,128,128)
+			Source=TimeSeries(1.159,48.424,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\ValleyviewAGDM_AT_Forecast.tsf),Agg)
+			Output=Node(AirTemp,at9_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
 				}
 			}
 		TextLabel
@@ -2295,6 +3212,105 @@ Workspace
 			ObjectColour=RGB(64,128,128)
 			Source=TimeSeries(22.060,67.333,TSM(AB.07GH802/TA/Cmd.Cor-Sensor.C),Agg)
 			Output=Node(AirTemp,at9_measured)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="rh2_forecast"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(128,0,255)
+			Source=TimeSeries(49.421,53.070,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\EagleshamAGDM_RH_Forecast.tsf),Agg)
+			Output=Node(RH,rh2_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="rh5_forecast"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(0,128,0)
+			Source=TimeSeries(44.612,49.421,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\LaGlaceAGDM_RH_Forecast.tsf),Agg)
+			Output=Node(RH,rh5_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="rh6_forecast"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(0,0,128)
+			Source=TimeSeries(42.457,48.922,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\JeanCoteAGDM_RH_Forecast.tsf),Agg)
+			Output=Node(RH,rh6_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="rh8_forecast"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(128,0,128)
+			Source=TimeSeries(36.485,48.094,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\TeepeeCreekAGDM_RH_Forecast.tsf),Agg)
+			Output=Node(RH,rh8_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="rh9_forecast"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=TimeSeries(34.660,49.583,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\ValleyviewAGDM_RH_Forecast.tsf),Agg)
+			Output=Node(RH,rh9_forecast)
 			Type="Default"
 			Routing=NULL
 			Output="Source"
@@ -2718,6 +3734,336 @@ Workspace
 			}
 		Link
 			{
+			Name="Link13"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(128,0,255)
+			Source=TimeSeries(51.727,80.921,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\EagleshamAGDM_U_Forecast.tsf),Agg)
+			Output=Node(WindForecast,u2.input)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link22"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(0,128,0)
+			Source=TimeSeries(54.412,84.466,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\LaGlaceAGDM_U_Forecast.tsf),Agg)
+			Output=Node(WindForecast,u5.input)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link52"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(0,0,128)
+			Source=TimeSeries(55.448,85.245,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\JeanCoteAGDM_U_Forecast.tsf),Agg)
+			Output=Node(WindForecast,u6.input)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link56"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(128,0,128)
+			Source=TimeSeries(57.871,85.939,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\TeepeeCreekAGDM_U_Forecast.tsf),Agg)
+			Output=Node(WindForecast,u8.input)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link159"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(128,0,255)
+			Source=TimeSeries(65.177,85.905,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\EagleshamAGDM_V_Forecast.tsf),Agg)
+			Output=Node(WindForecast,v2.input)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link160"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=TimeSeries(69.325,85.239,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\LaGlaceAGDM_V_Forecast.tsf),Agg)
+			Output=Node(WindForecast,v5.input)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link161"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(0,0,160)
+			Source=TimeSeries(69.488,82.586,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\JeanCoteAGDM_V_Forecast.tsf),Agg)
+			Output=Node(WindForecast,v6.input)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link162"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(128,0,128)
+			Source=TimeSeries(68.990,78.774,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\TeepeeCreekAGDM_V_Forecast.tsf),Agg)
+			Output=Node(WindForecast,v8.input)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link163"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(WindForecast,u1.output)
+			Output=Node(WindSpeed,u1_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link164"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(WindForecast,u2.output)
+			Output=Node(WindSpeed,u2_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link165"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(WindForecast,u3.output)
+			Output=Node(WindSpeed,u3_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link166"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(WindForecast,u4.output)
+			Output=Node(WindSpeed,u4_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link167"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(WindForecast,u5.output)
+			Output=Node(WindSpeed,u5_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link168"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(WindForecast,u6.output)
+			Output=Node(WindSpeed,u6_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link169"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(WindForecast,u7.output)
+			Output=Node(WindSpeed,u7_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link170"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(WindForecast,u8.output)
+			Output=Node(WindSpeed,u8_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="Link171"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			Source=Node(WindForecast,u9.output)
+			Output=Node(WindSpeed,u9_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
 			Name="u2_measured"
 			Description=
 				{
@@ -2977,6 +4323,146 @@ Workspace
 				}
 			Source=Node(WindSpeed,u9.output)
 			Output=Node(CRHM_output,u9)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="p2_forecast"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(128,0,255)
+			Source=TimeSeries(88.396,31.341,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\EagleshamAGDM_PR_Forecast.tsf),Agg)
+			Output=Node(Precip,p2_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="p4_forecast"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(0,0,255)
+			Source=TimeSeries(83.588,29.186,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\HendricksonCreek_PR_Forecast.tsf),Agg)
+			Output=Node(Precip,p4_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="p5_forecast"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(0,128,0)
+			Source=TimeSeries(81.925,29.023,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\LaGlaceAGDM_PR_Forecast.tsf),Agg)
+			Output=Node(Precip,p5_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="p6_forecsat"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(0,0,128)
+			Source=TimeSeries(80.268,28.525,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\JeanCoteAGDM_PR_Forecast.tsf),Agg)
+			Output=Node(Precip,p6_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="p7_forecast"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(255,0,255)
+			Source=TimeSeries(76.619,27.529,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\PeoriaAGDM_PR_Forecast.tsf),Agg)
+			Output=Node(Precip,p7_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="p8_forecsat"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(128,0,128)
+			Source=TimeSeries(74.632,28.195,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\TeepeeCreekAGDM_PR_Forecast.tsf),Agg)
+			Output=Node(Precip,p8_forecast)
+			Type="Default"
+			Routing=NULL
+			Output="Source"
+			Symbols=
+				{
+				}
+			Rule=
+				{
+				}
+			}
+		Link
+			{
+			Name="p9_forecast"
+			Description=
+				{
+				Simple "direct connect" link
+				}
+			ObjectColour=RGB(64,128,128)
+			Source=TimeSeries(72.309,28.688,Text(M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\TimeSeries\ValleyviewAGDM_PR_Forecast.tsf),Agg)
+			Output=Node(Precip,p9_forecast)
 			Type="Default"
 			Routing=NULL
 			Output="Source"
@@ -3251,7 +4737,7 @@ Workspace
 			{
 			Caption=
 				{
-				For creating initial state file
+				Using weather forecasts
 				}
 			AttachedTo=
 			Rect=1.846177,89.177939,96.320988,93.607549
@@ -3267,7 +4753,7 @@ Workspace
 				PointSize=240
 				TextStyle=
 				TextColour=RGB(0,0,0)
-				Height=792
+				Height=1008
 				Width=0
 				Escapement=0
 				Orientation=0

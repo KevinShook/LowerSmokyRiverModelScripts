@@ -3,8 +3,8 @@ DateFormat=British
 Description=
 	{
 	}
-Start=01/10/2012 @ 00:00:00
-Finish=01/09/2016 @ 23:00:00
+Start=02/28/(0) @ 00:00:00
+Finish=09/01/(0) @ 23:00:00
 HotStartTime=
 Step=Hourly
 HotStartFile=
@@ -547,8 +547,8 @@ Workspace
 			Type="Custom"
 			Symbols=
 				{
-				const String HourlyObsFileName = "M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\OBSFiles\HourlyCRHMObs_2016InitialState.obs"
-				const String DailyObsFileName = "M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\OBSFiles\DailyCRHMObs_2016InitialState.obs"
+				const String HourlyObsFileName = "M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\OBSFiles\HourlyCRHMObs_InitialState.obs"
+				const String DailyObsFileName = "M:\OPS\OIB\RFS\RiverEng\ICE\CRHM\LSRM-DMS\OBSFiles\DailyCRHMObs_InitialState.obs"
 				const int num_basins = 26
 				}
 			Sources="ppt1, ppt2, ppt3, ppt4, ppt5, t1, t2, t3, t4, t5, u1, u2, u3, u4, u5, vp1, vp2, vp3, vp4, vp5, ppt6, ppt7, ppt8, ppt9, t6, t7, t8, t9, u6, u7, u8, u9, vp6, vp7, vp8, vp9"
@@ -908,7 +908,7 @@ Workspace
 				
 				; set file headers
 				hourly_header1="Made for Smoky River Local Flow Model"
-				hourly_header2="t 26 (Â°C)"
+				hourly_header2="t 26 (°C)"
 				hourly_header3="rh 26 (%)"
 				hourly_header4="u 26 (m/s)"
 				hourly_header5="$ea ea(t, rh) (kPa) vapour pressure"
