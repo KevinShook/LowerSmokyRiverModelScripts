@@ -1427,7 +1427,7 @@ Workspace
 				Simple "direct connect" link
 				}
 			ObjectColour=RGB(255,0,0)
-			Source=TimeSeries(4.305,57.658,TSM(S000.BER_OJP_00/TA_09_OJ2/04.F.0030),Agg)
+			Source=TimeSeries(4.305,57.658,TSM(AB.MSC-003/TA/Cmd.Cor-Sensor.C),Agg)
 			Output=Node(AirTemp,at1_measured)
 			Type="Default"
 			Routing=NULL
